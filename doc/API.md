@@ -1,6 +1,6 @@
 TODO: This Documentation is unfull and partly deprecated!
-API Documentation
-	Methods
+# API Documentation
+##	Methods
 		dragonblocks.addFinalStep(function() : void) : void
 			Execute the function after all mods are loaded, the player is spawned and the map is generated.
 		dragonblocks.chatMessage(message : String) : void
