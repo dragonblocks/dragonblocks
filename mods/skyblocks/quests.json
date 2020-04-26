@@ -1,0 +1,58 @@
+[
+	{
+		"name": "dig_dirt",
+		"desc": "Dig 5 dirt",
+		"action": "dig",
+		"param": "dirt",
+		"reward": "tools:stick",
+		"count": 5
+	},
+	{
+		"name": "place_dirt",
+		"desc": "Place 5 dirt",
+		"action": "place",
+		"param": "dirt",
+		"reward": "plants:apple_leaves 6",
+		"count": 5
+	},
+	{
+		"name": "place_sapling",
+		"desc": "Plant a tree",
+		"action": "place",
+		"param": "plants:apple_sapling",
+		"reward": "plants:apple_tree",
+		"count": 1
+	},
+	{
+		"name": "dig_tree",
+		"desc": "Dig 8 Tree",
+		"action": "dig",
+		"param": "plants:apple_tree",
+		"reward": "core:cobble 8",
+		"count": 8
+	},
+	{
+		"name": "place_furnace",
+		"desc": "Place a furnace",
+		"action": "place",
+		"param": "furnace:furnace",
+		"reward": "tools:steel_axe",
+		"count": 1
+	},
+	{
+		"name": "place_chest",
+		"desc": "Place a chest",
+		"action": "place",
+		"param": "chest:chest",
+		"reward": "plants:papyrus 5",
+		"count": 1
+	},
+	{
+		"name": "place_door",
+		"desc": "Place a door",
+		"action": "use",
+		"param": "doors:door_wood",
+		"reward": "tools:steel_pickaxe",
+		"count": 1
+	}
+] 

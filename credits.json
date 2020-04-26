@@ -1,0 +1,11 @@
+[
+	"<br><img texture='logo.png' height=180 /><h1>CREDITS</h1>",
+	"<br><img texture='credits_fleckenstein.png' height=180 ><h1>Elias Fleckenstein</h1><ul><li>Project Leader</li><li>Dragonblocks Engine</li><li>Gravity Engine (Former Engine)</li><li>Gameplay</li><li>Mods</li></ul>",
+	"<br><img texture='credits_derzombiiie.png' height=180 ><h1>DerZombiiie</h1><ul><li>Gravity Engine (Former Engine)</li><li>Gameplay</li><li>Mods</li></ul>",
+	"<br><img texture='credits_himbeerserver.png' height=180 ><h1>HimbeerserverDE</h1><ul><li>Development Testing</li><li>Lots of Ideas, Reported Issues, Tips, Feature Requests etc.</li><li>Mods</li></ul>",
+	"<br><img texture='credits_sc++.png' height=180 ><h1>SC++</h1><ul><li>Gravity Engine (Former Engine)</li></ul>",
+	"<br><h1>THANKS TO</h1>",
+	"<br><img texture='credits_elidragon.png' height=180 ><h1>The Elidragon Team</h1><h4>The game could have never been done without your support!</h4><ul><li>Elias Fleckenstein</li><li>DerZombiiie</li><li>HimbeerserverDE</li><li>SC++</li><li>TheodorSmall</li><li>Max Glueckstaler</li><li>Anton</li><li>Rapunzel</li></ul>",
+	"<br><img texture='credits_javascript.png' ><h1>Our Javascript Teachers</h1><ul><li>biec</li><li>quizdidaktik</li><li>db5fx</li><li><a href='http://wiki.selfhtml.org'>selfhtml</li></ul>",
+	"<br><img texture='credits_minetest.png'><h1>Minetest</h1><ul><li>Inspiration</li><li>Sounds</li><li>Textures</li></ul>"
+] 

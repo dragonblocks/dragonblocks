@@ -1,0 +1,7 @@
+furnace
+plants
+tools
+chest
+core
+dirt
+chat

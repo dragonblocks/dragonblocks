@@ -1,0 +1,37 @@
+{
+	"version": {
+		"major": 3,
+		"minor": 0,
+		"patch": 0,
+		"snapshot": 23,
+		"copyright": "© 2019 - 2020 Elidragon. Please Distribute!"
+	},
+	"inventory": {
+		"scale": 50
+	},
+	"item": {
+		"defaultStacksize": 99
+	},
+	"physics": {
+		"gravity": 9.81
+	},
+	"player": {
+		"speed": 4,
+		"jumpspeed": 6.5,
+		"defaultSkin": "Sam",
+		"range": 4,
+		"digInterval": 500,
+		"digDamage": 1
+	},
+	"map": {
+		"width": 250,
+		"height": 100,
+		"scale": 50
+	},
+	"chat": {
+		"lines": 8
+	},
+	"timer": {
+		"tps": 3
+	}
+}
