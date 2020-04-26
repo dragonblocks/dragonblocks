@@ -9,6 +9,10 @@
 		li.style.fontSize = "20px";
 		li.innerHTML = quest.desc;
 		li.style.postion = "relative";
+		let questCount = ul.appendChild(document.createElement("var"));
+		questCount.style.position = "absolute";
+		questCount.style.right = "20px";
+		questCount.
 		let checkbox = li.appendChild(document.createElement("input"));
 		checkbox.type = "checkbox";
 		checkbox.style.position = "absolute";
