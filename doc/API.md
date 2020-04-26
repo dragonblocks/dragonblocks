@@ -15,6 +15,8 @@ TODO: This Documentation is unfull and partly deprecated!
 			Clear a timer set using  dragonblocks.setTimer
 		dragonblocks.createItemstack(itemstring : String) : dragonblocks.Itemstack
 			Create an Itemstack object and immediately parse the provided itemstring.
+		dragonblocks.createWorld(properties : Object) : void
+			Create and load a world without saving it.
 		dragonblocks.error(errorstring : String) : void
 			Throw an error. (errorstring is added to dragonblocks.backlog)
 		dragonblocks.finalize() : void
@@ -39,6 +41,8 @@ TODO: This Documentation is unfull and partly deprecated!
 			Same as dragonblocks.getSound, exept for Textures and, if the file is found, it will surrond it with url() so you can do elem.style.background = dragonblocks.getTexture(...)
 		dragonblocks.getToken() : String
 			Returns a unique string starting with #
+		dragonblocks.getTool(name : String) : dragonblocks.Tool
+			Returns the tool with the id "name".
 		dragonblocks.getVersion() : String
 			Returns the version string (something like "Dragonblocks 3.0")
 		dragonblocks.isValidItemstring(itemstring : String)
