@@ -47,6 +47,8 @@ TODO: This Documentation is unfull and partly deprecated!
 			Returns the version string (something like "Dragonblocks 3.0")
 		dragonblocks.isValidItemstring(itemstring : String)
 			Check if an Itemstring is OK
+		dragonblocks.log(message : String) : void
+			Add a message to the backlog.
 		dragonblocks.gui.toggleLayer() : void
 			Toggle the Layer. 
 		dragonblocks.gui.openLayer() : void
@@ -80,5 +82,38 @@ TODO: This Documentation is unfull and partly deprecated!
 			Contains all created Itemstacks
 		dragonblocks.keyHandler: dragonblocks.KeyHandler
 			The Keyhandler
-	Classes
-	 
+##	Classes
+	
+## Modding tutorial
+###	dragonblocks.register method
+####	dragonblocks.registerEntity
+		dragonblocks.registerEntity({
+			name: "mod_tutorial:entity", // Entitystring
+			desc: "Tutorial entity", // Entity description
+			texture: "entity.png", // Entity texture
+			width: 1, // Entity width
+			height: 2, // Entity height
+			verticalSpeed: 6.5, // Entity jump speed (affects height)
+			horizontalSpeed: 4, // Entity walk speed
+			gravity: true, // Enable or disable gravity
+			onspawn: self => {
+				alert("Entity spawned!");
+			}
+			onpunch: self => {
+				alert("Entity punched!");
+				self.despawn(); // Let entity despawn
+			}
+			onclick: self => {
+				alert("Entity clicked!");
+				self.jumpOnce(); // Make entity jump once
+			}
+		});
+####	dragonblocks.registerItem
+		dragonblocks.registerItem({
+			name: "mod_tutorial:item", // Itemstring
+			desc: "Tutorial entity spawner", // Item description
+			texture: "item.png", // Item texture
+			onuse: (x, y) => {
+				let entity = dragonblocks.spawnEntity("mod_tutorial:entity", x, y); // Spawn entity and save it to a variable (for later access)
+			}
+		});
