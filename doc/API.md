@@ -52,9 +52,10 @@ TODO: This Documentation is unfull and partly deprecated!
 		dragonblocks.gui.hideLayer() : void
 			Hide the Layer
 		dragonblocks.gui.createBox(properties : Object) : Element
-			Creates a dragonblocks.gui.Box(properties) and returns its the DOM Element.
+			Creates a dragonblocks.gui.Box(properties) and returns an object to access it.
+			Valid properties are closeable : boolean, id : String, scroll : boolean, moveable : boolean, size : String ("big" or "small"), layer : boolean, keylock : boolean
 		
-	Objects
+##	Objects
 		dragonblocks.availableMods : Array
 			A list of all mods
 		dragonblocks.backlog : String
@@ -65,8 +66,6 @@ TODO: This Documentation is unfull and partly deprecated!
 			Contains all registered chatcommands
 		dragonblocks.entities : Object
 			Contains all registered entities
-		dragonblocks.finalSteps : Array
-			Contains the final Steps added using dragonblocks.addFinalStep
 		dragonblocks.gamemods : Array
 			Contains the gamemods
 		dragonblocks.groups : Object
