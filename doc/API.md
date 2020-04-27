@@ -82,6 +82,22 @@ TODO: This Documentation is unfull and partly deprecated!
 			Contains all created Itemstacks
 		dragonblocks.keyHandler: dragonblocks.KeyHandler
 			The Keyhandler
+		dragonblocks.mods : Array
+			Contains all loaded mods
+		dragonblocks.nodes : Object
+			Contains all registered nodes
+		dragonblocks.recipes : Array
+			Contains all registered recipes
+		dragonblocks.settings : Object
+			Contains all dragonblocks settings
+		dragonblocks.skins : Object
+			Contains all registered skins
+		dragonblocks.spawnedEntities : Array
+			Contains all spawned entities
+		dragonblocks.tools : Object
+			Contains all registered tools
+		dragonblocks.worlds : Array
+			List of saved worlds of logged-in user
 ##	Classes
 	
 ## Modding tutorial
