@@ -14,7 +14,7 @@
 		in front of the itemstring. This is not a typo and it is
 		required to have exactly ONE of these in the manipulator.
 		It marks the block you have to pass to
-		```dragonblocks.PixelManipulator.apply(x, y)```.
+		dragonblocks.PixelManipulator.apply(x, y).
 		If you apply the Pixel Manipulator, the coordinates of the
 		marked node will equal the coordinates you passed to the
 		method.
