@@ -35,8 +35,14 @@ dragonblocks.registerOnChatMessage(msg => {
 	let command = msg.slice(msg.search("/") + 1, msg.search(" "));
 	let arg = msg.slice(msg.search(" ") + 1);
 	arg = arg.slice(0, arg.length - 1);
-	if(dragonblocks.chatcommands[command])
-		dragonblocks.chatcommands[command].func(arg);
+	if(dragonblocks.chatcommands[command]){
+		try {
+			dragonblocks.chatcommands[command].func(arg);
+		}
+		catch(e){
+			dragonblocks.chatMessage("!HTML <span style=\"color: red; font-width: bold\"> " + e.toString() + "</span>");
+		}
+	}
 	else
 		dragonblocks.chatMessage("Invalid Command: " + command);
 	return false;
