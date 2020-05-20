@@ -2,6 +2,7 @@ music = {};
 music.settings = $.getJSON(dragonblocks.getModpath("music") + "/settings.json").responseJSON;
 {
 	let display = document.createElement("audio");
+	display.id = "music";
 	display.src = dragonblocks.getSound("music.ogg");
 	display.volume = music.settings.volume;
 	display.loop = true;
