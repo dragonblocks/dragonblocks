@@ -181,6 +181,15 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 		return this.meta.skin;
 	}
 	set gamemode(mode){
+		this.setGamemode(mode);
+	}
+	get gamemode(){
+		return this.meta.creative ? "creative" : "survival";
+	}
+	get tool(){
+		return dragonblocks.getTool(this.getWieldedItem().item) || this.tmp.defaultTool;
+	}
+	setGamemode(mode){
 		switch(mode.toString().toLowerCase()){
 			case "0":
 			case "survival":
@@ -196,12 +205,6 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 		this.resetInventoryElements();
 		this.tmp.defaultTool = dragonblocks.getTool(this.meta.creative ? "dragonblocks:creative_hand" : "dragonblocks:hand");
 		return true;
-	}
-	get gamemode(){
-		return this.meta.creative ? "creative" : "survival";
-	}
-	get tool(){
-		return dragonblocks.getTool(this.getWieldedItem().item) || this.tmp.defaultTool;
 	}
 	inventoryIsOpen(){
 		return this.tmp.inventory.opened;

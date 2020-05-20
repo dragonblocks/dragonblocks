@@ -98,11 +98,11 @@ dragonblocks.registerChatcommand({
 dragonblocks.registerChatcommand({
 	name: "gamemode",
 	desc: "Set your gamemode",
-	param: "survival | creative",
+	param: "survival | 0 | creative | 1",
 	func: arg => {
 		if(! arg)
 			dragonblocks.chatMessage("Current Gamemode is " + dragonblocks.player.gamemode + ".");
-		else if(dragonblocks.player.gamemode = arg)
+		else if(dragonblocks.player.setGamemode(arg))
 			dragonblocks.chatMessage("Set Gamemode to " + arg + ".");
 		else
 			dragonblocks.chatMessage("Gamemode could not been set to " + arg + ".");
