@@ -31,7 +31,7 @@ dragonblocks.textures = {};
 dragonblocks.loadTexture = function(path){
 	new dragonblocks.Texture(path);
 };
-(_ => {
+{
 	let textures = $.getJSON({
 		url: "api.php",
 		method: "POST",
@@ -39,7 +39,7 @@ dragonblocks.loadTexture = function(path){
 	}).responseJSON;
 	for(let i in textures)
 		dragonblocks.loadTexture(textures[i]);
-})();
+}
 dragonblocks.getTexture = function(texture){
 	if(! texture)
 		return "none";
@@ -75,7 +75,7 @@ dragonblocks.getSound = function(sound){
 	else
 		return sound;
 };
-(_ => {
+{
 	let sounds = $.getJSON({
 		url: "api.php",
 		method: "POST",
@@ -83,7 +83,7 @@ dragonblocks.getSound = function(sound){
 	}).responseJSON;
 	for(let i in sounds)
 		dragonblocks.loadSound(sounds[i]);
-})();
+}
 dragonblocks.playSound = function(sound){
 	new Audio(dragonblocks.getSound(sound)).play();
 }
