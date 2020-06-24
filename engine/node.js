@@ -31,21 +31,6 @@ dragonblocks.Node = class extends dragonblocks.Item{
 		if(this.mobstable == undefined)
 			this.mobstable = this.stable;
 		let self = this;
-		if(this.physics){
-			dragonblocks.registerEntity({
-				name: this.name,
-				gravity: true,
-				width: 1,
-				height: 1,
-				texture: this.texture,
-				oncollide: entity => {
-					if(! dragonblocks.getNode(Math.floor(entity.x), Math.floor(entity.y) + 1) || dragonblocks.getNode(Math.floor(entity.x), Math.floor(entity.y) + 1).mobstable){
-						dragonblocks.setNode(Math.floor(entity.x), Math.floor(entity.y), entity.name);
-						entity.despawn();
-					}
-				}
-			});
-		}
 		if(this.liquid){
 			this.hardness = 1;
 			let oldOndig = this.ondig;
@@ -119,11 +104,4 @@ dragonblocks.onPunchNodeFunctions = [];
 dragonblocks.registerOnPunchNode = function(func){
 	dragonblocks.onPunchNodeFunctions.push(func);
 }
-dragonblocks.registerOnActivateNode((x, y) => {
-	if(! dragonblocks.getNode(x, y).toNode().physics || ! dragonblocks.getNode(x, y + 1) || dragonblocks.getNode(x, y + 1).mobstable)
-		return;
-	let name = 	dragonblocks.getNode(x, y).name;
-	setTimeout(_ => {dragonblocks.map.activate(x, y);}, 50);
-	dragonblocks.setNode(x, y, "air");
-	dragonblocks.spawnEntity(name, x, y);
-})
+
