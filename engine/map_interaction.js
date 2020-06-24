@@ -102,12 +102,8 @@ dragonblocks.MapIntercation = {
 		if(! mapNode)
 			return;
 		let node = mapNode.toNode();
-		if(this.dig(x, y)){
-			if(node.drops instanceof Function)
-				this.tmp.mainInventory.add(node.drops());
-			else
-				this.tmp.mainInventory.add(node.drops);
-		}
+		if (this.dig(x, y))
+			dragonblocks.handleNodeDrop(this.tmp.mainInventory, node, x, y);
 		document.getElementById("dragonblocks.crack[" + this.id + "]").style.visibility = "hidden";
 	},
 	digStop(){
@@ -158,3 +154,7 @@ dragonblocks.MapIntercation = {
 		return (Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2)) <= this.tool.range) || this.meta.creative;
 	},
 } 
+
+dragonblocks.handleNodeDrop = function(inventory, node, x, y) {
+	dragonblocks.dropItem(inventory.add((node.drops instanceof Function) ? node.drops() : node.drops), x + 0.2, y + 0.2);
+}

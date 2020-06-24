@@ -26,10 +26,14 @@ dragonblocks.registerEntity({
 	width: 0.4,
 	height: 0.4,
 	gravity: true,
+	verticalSpeed: 2,
 	onpunch: self => {
 		dragonblocks.dropItem(dragonblocks.player.give(self.meta.itemstring), self.x, self.y);
 		self.despawn();
-	}
+	},
+	oncollide: self => {
+		self.jump();
+	},
 });
 
 dragonblocks.dropItem = function(itemstack, x, y) {
