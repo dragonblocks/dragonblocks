@@ -26,22 +26,24 @@ dragonblocks.registerEntity({
 	width: 1,
 	height: 1,
 	texture: this.texture,
-	oncollide: entity => {
-		if(! dragonblocks.getNode(Math.floor(entity.x), Math.floor(entity.y) + 1) || dragonblocks.getNode(Math.floor(entity.x), Math.floor(entity.y) + 1).mobstable){
-			dragonblocks.setNode(Math.floor(entity.x), Math.floor(entity.y), entity.meta.nodeName);
-			entity.despawn();
+	oncollide: self => {
+		if(! dragonblocks.getNode(Math.floor(self.x), Math.floor(self.y) + 1) || dragonblocks.getNode(Math.floor(self.x), Math.floor(self.y) + 1).mobstable){
+			dragonblocks.setNode(Math.floor(self.x), Math.floor(self.y), self.meta.nodeName);
+			self.despawn();
 		}
 	}
 }); 
 
 dragonblocks.registerOnActivateNode((x, y) => {
-	if(! dragonblocks.getNode(x, y).toNode().physics || ! dragonblocks.getNode(x, y + 1) || dragonblocks.getNode(x, y + 1).mobstable)
-		return;
-	let name = 	dragonblocks.getNode(x, y).name;
+	if(dragonblocks.getNode(x, y).toNode().physics && dragonblocks.getNode(x, y + 1) && ! dragonblocks.getNode(x, y + 1).mobstable)
+		dragonblocks.spawnFallingNode(dragonblocks.getNode(x, y).name, x, y)
+})
+
+dragonblocks.spawnFallingNode = function(nodename, x, y) {
 	setTimeout(_ => {dragonblocks.map.activate(x, y);}, 50);
 	dragonblocks.setNode(x, y, "air");
 	let entity = dragonblocks.spawnEntity("dragonblocks:falling_node", x, y);
-	entity.meta.nodeName = name;
-	entity.texture = dragonblocks.nodes[name].texture;
+	entity.meta.nodeName = nodename;
+	entity.texture = dragonblocks.nodes[nodename].texture;
 	entity.updateTexture();
-})
+}
