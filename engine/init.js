@@ -161,7 +161,7 @@ dragonblocks.loadMod = function(modname){
 	dragonblocks.loadedMods.push(modname);
 	dragonblocks.loadingMods[modname] = false;
 }
-dragonblocks.modules = ["ressources", "key_handler", "gui", "mapgen", "world", "item", "node", "tool", "group", "builtin", "map_node", "map", "itemstack", "inventory", "inventory_group", "hudbar", "inventory_container", "creative_inventory", "recipe", "craftfield", "menu", "skin", "entity", "map_interaction", "spawned_entity", "falling_node", "timer", "player", "pixel_manipulator", "chat", "chatcommands", "mainmenu"];
+dragonblocks.modules = ["ressources", "key_handler", "gui", "mapgen", "world", "item", "node", "tool", "group", "builtin", "map_node", "map", "itemstack", "inventory", "inventory_group", "hudbar", "inventory_container", "creative_inventory", "recipe", "craftfield", "menu", "skin", "entity", "map_interaction", "spawned_entity", "item_entity", "falling_node", "timer", "player", "pixel_manipulator", "chat", "chatcommands", "mainmenu"];
 dragonblocks.moduleCount = dragonblocks.modules.length;
 dragonblocks.loadModule = function(){
 	if(dragonblocks.modules[0]){
