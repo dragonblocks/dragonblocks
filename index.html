@@ -1,18 +1,12 @@
-<!DOCTYPE php>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
 		<link rel="icon" href="textures/icon.png">
 		<link rel="stylesheet" href="style.css">
-		<?php
-			$libs = scandir("lib");
-			for($i = 0; $i < count($libs); $i++){
-				if($libs[$i][0] == ".")
-					continue;
-				echo "<script src='lib/$libs[$i]'></script>";
-			}
-		?>
-	<script defer src="engine/init.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<script defer src="lib/dblib.js"></script>
+		<script defer src="engine/init.js"></script>
 	</head>
 	<body>
 		<center id="elidragon">
