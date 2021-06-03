@@ -3,7 +3,8 @@
 		"major": 3,
 		"minor": 1,
 		"patch": 0,
-		"snapshot": 1,
+		"development": true,
+		"commit": "?",
 		"copyright": "© 2019 - 2021 Elidragon. Please Distribute!"
 	},
 	"inventory": {

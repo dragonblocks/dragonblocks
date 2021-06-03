@@ -31,6 +31,11 @@ dragonblocks = {};
 dragonblocks.settings = $.getJSON("settings.json").responseJSON;
 dragonblocks.backlog = "";
 dragonblocks.mods = [];
+dragonblocks.settings.version.commit = $.get({
+	url: "api.php",
+	method: "POST",
+	data: {call: "commitID"}
+}).responseText || dragonblocks.settings.version.commit;
 dragonblocks.gamemods = $.getJSON({
 	method: "POST",
 	url: "api.php",
@@ -73,7 +78,7 @@ dragonblocks.getModpath = function(mod){
 }
 dragonblocks.getVersion = function(){
 	let version = dragonblocks.settings.version;
-	return "Dragonblocks " + version.major + "." + version.minor + (version.patch ? "." + version.patch : "") + (version.snapshot ? "-dev-" + version.snapshot : "");
+	return "Dragonblocks " + version.major + "." + version.minor + (version.patch ? "." + version.patch : "") + (version.development ? "-dev-" + version.commit : "");
 }
 dragonblocks.start = function(){
 	for(let func of dragonblocks.onStartFunctions)

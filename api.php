@@ -50,5 +50,8 @@
 			file_put_contents("worlds/" . $_POST["name"] . "/world.json", $_POST["world"]);
 			file_put_contents("worlds/" . $_POST["name"] . "/owner.txt", get_username());
 			break;
+		case "commitID":
+			echo shell_exec("git rev-parse --short HEAD");
+			break;
 	}
 ?>
