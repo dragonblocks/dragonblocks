@@ -159,6 +159,14 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 			self.stopJump();
 		});
 
+		dragonblocks.keyHandler.down("w", _ => {
+			self.jump();
+		});
+
+		dragonblocks.keyHandler.up("w", _ => {
+			self.stopJump();
+		});
+
 		dragonblocks.keyHandler.down("ArrowLeft", _ => {
 			self.moveLeft();
 		});
@@ -167,11 +175,27 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 			self.moveRight();
 		});
 
+		dragonblocks.keyHandler.down("a", _ => {
+			self.moveLeft();
+		});
+
+		dragonblocks.keyHandler.down("d", _ => {
+			self.moveRight();
+		});
+
 		dragonblocks.keyHandler.up("ArrowLeft", _ => {
 			self.stop();
 		});
 
 		dragonblocks.keyHandler.up("ArrowRight", _ => {
+			self.stop();
+		});
+
+		dragonblocks.keyHandler.up("a", _ => {
+			self.stop();
+		});
+
+		dragonblocks.keyHandler.up("d", _ => {
 			self.stop();
 		});
 
