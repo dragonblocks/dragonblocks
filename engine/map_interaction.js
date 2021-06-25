@@ -124,6 +124,7 @@ dragonblocks.MapInteraction = {
 			let crack = document.getElementById("dragonblocks.crack[" + this.id + "]");
 			crack.style.background = dragonblocks.getTexture("crack" + Math.floor(node.meta.causedDamage / nodeDef.hardness * 5) + ".png");
 			crack.style.backgroundSize = "cover";
+			crack.style.zIndex = nodeDef.zIndex || "1";
 
 			this.tmp.digTimeout = setTimeout(_ => {
 				self.digTick(x, y);
