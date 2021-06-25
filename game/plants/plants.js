@@ -14,7 +14,7 @@ doors.registerTrapdoor({
 	groups: ["choppy"],
 	hardness: 6,
 	material: "plants_wood",
-}); 
+});
 doors.registerDoor({
 	name: "wood",
 	modname: "plants",
@@ -24,7 +24,7 @@ doors.registerDoor({
 });
 plants.registerTree({
 	name: "apple",
-	tree: dragonblocks.getPixelManipulator([
+	tree: new dragonblocks.PixelManipulator([
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
@@ -38,7 +38,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "pine",
-	tree: dragonblocks.getPixelManipulator([
+	tree: new dragonblocks.PixelManipulator([
 		["", "", "leaves", "", ""],
 		["", "", "leaves", "", ""],
 		["", "leaves", "leaves", "leaves", ""],
@@ -56,7 +56,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "acacia",
-	tree: dragonblocks.getPixelManipulator([
+	tree: new dragonblocks.PixelManipulator([
 		["", "", "leaves", "leaves", "leaves", "", ""],
 		["leaves", "leaves", "leaves", "tree", "leaves", "leaves", "leaves"],
 		["leaves", "tree", "leaves", "tree", "leaves", "tree", "leaves"],
@@ -71,7 +71,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "jungle",
-	tree: dragonblocks.getPixelManipulator([
+	tree: new dragonblocks.PixelManipulator([
 		["", "leaves", "leaves", "leaves", ""],
 		["leaves", "leaves", "leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves", "leaves", "leaves"],
@@ -85,7 +85,7 @@ plants.registerTree({
 		["", "", "tree", "", ""],
 		["", "tree", "tree", "tree", ""],
 		["", "tree", "§tree", "tree", ""],
-		
+
 	]),
 	growtimeMin: 40,
 	growtimeMax: 100,
@@ -94,7 +94,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "aspen",
-	tree: dragonblocks.getPixelManipulator([
+	tree: new dragonblocks.PixelManipulator([
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
@@ -102,7 +102,7 @@ plants.registerTree({
 		["", "tree", ""],
 		["", "tree", ""],
 		["", "§tree", ""],
-		
+
 	]),
 	growtimeMin: 30,
 	growtimeMax: 40,

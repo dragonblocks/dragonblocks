@@ -1,3 +1,3 @@
 @font-face {font-family: Ubuntu; src: url(fonts/Ubuntu.ttf);}
-*{font-family: Ubuntu; scrollbar-width: none; -ms-overflow-style: none;}
+* {font-family: Ubuntu; scrollbar-width: none; -ms-overflow-style: none;}
 ::-webkit-scrollbar {width: 0px;}

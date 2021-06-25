@@ -6,17 +6,30 @@
 		<link rel="stylesheet" href="style.css">
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 		<script src="lib/dblib.js"></script>
+		<script>
+			$.ajaxSetup({
+				async: false,
+				cache: false
+			});
+
+			addEventListener("contextmenu", event => {
+				event.preventDefault();
+			});
+		</script>
 		<script defer src="engine/init.js"></script>
 	</head>
 	<body>
-		<center id="elidragon">
-			<img src="textures/elidragon.png" width="90%">
-			<h3 id="elidragon.status">init.js</h3>
-			<div style="border-style: solid; width: 90%; height: 50px; position:relative;" >
-				<div style="height: calc(100% - 10px); width: calc(100% - 10px); left: 5px; top: 5px; position:absolute">
-					<div style="background-color: yellow; height: 100%; left: 0px; top: 0px; position:absolute" id="elidragon.loadbar"></div>
+		<div style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px" id="elidragon">
+			<center>
+				<br>
+				<img src="textures/elidragon.png" width="90%">
+				<h3 id="elidragon.status">init.js</h3>
+				<div style="border-style: solid; width: 90%; height: 50px; position:relative;" >
+					<div style="height: calc(100% - 10px); width: calc(100% - 10px); left: 5px; top: 5px; position:absolute">
+						<div style="background-color: yellow; height: 100%; left: 0px; top: 0px; position:absolute" id="elidragon.loadbar"></div>
+					</div>
 				</div>
-			</div>
-		</center>
+			</center>
+		</div>
 	</body>
 </html>

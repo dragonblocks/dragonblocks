@@ -9,7 +9,7 @@ dragonblocks.registerNode({
 		let meta = dragonblocks.getNode(x, y).meta;
 		meta.inventory = new furnace.Inventory();
 		if(meta.inventoryString)
-			meta.inventory.parse(meta.inventoryString);
+			meta.inventory.ceserialize(meta.inventoryString);
 	},
 	onclick: (x, y) => {
 		let meta = dragonblocks.getNode(x, y).meta;
@@ -17,7 +17,7 @@ dragonblocks.registerNode({
 		dragonblocks.player.openInventory();
 		dragonblocks.player.onNextInventoryClose = _ => {
 			dragonblocks.player.resetInventoryElements();
-			meta.inventoryString = meta.inventory.stringify();
+			meta.inventoryString = meta.inventory.serialize();
 		};
 	},
 	ondig: (x, y) => {

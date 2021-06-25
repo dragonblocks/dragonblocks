@@ -1,5 +1,5 @@
 tnt = {};
-tnt.explosion = dragonblocks.getPixelManipulator([
+tnt.explosion = new dragonblocks.PixelManipulator([
 	["", "air", "air", "air", ""],
 	["air", "air", "air", "air", "air"],
 	["air", "air", "§air", "air", "air"],

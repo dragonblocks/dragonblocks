@@ -20,199 +20,218 @@
  *
  *
  */
-$.ajaxSetup({
-	async: false,
-	cache: false
-});
-addEventListener("contextmenu", event => {
-	event.preventDefault();
-});
-dragonblocks = {};
-dragonblocks.settings = $.getJSON("settings.json").responseJSON;
-dragonblocks.backlog = "";
-dragonblocks.mods = [];
-dragonblocks.settings.version.commit = $.get({
-	url: "api.php",
-	method: "POST",
-	data: {call: "commitID"}
-}).responseText || dragonblocks.settings.version.commit;
-dragonblocks.gamemods = $.getJSON({
-	method: "POST",
-	url: "api.php",
-	data: {call: "getGamemods"},
-}).responseJSON;
-dragonblocks.availableMods = $.getJSON({
-	method: "POST",
-	url: "api.php",
-	data: {call: "getMods"},
-}).responseJSON;
-dragonblocks.loggedin = $.getJSON({
-	url: "api.php",
-	method: "POST",
-	data: {call: "isLoggedin"}
-}).responseJSON;
-dragonblocks.username = "singleplayer";
-if(dragonblocks.loggedin){
-	dragonblocks.username = $.post({
-		url: "api.php",
-		data: {call: "getUsername"}
-	}).responseText;
-}
-dragonblocks.log = function(text){
-	console.log("[Dragonblocks] " + text);
-	dragonblocks.backlog += text + "\n";
-}
-dragonblocks.error = function(err){
-	let error = new Error(err);
-	dragonblocks.backlog += error;
-	throw error;
-}
-dragonblocks.getToken = function(){
-	return "#" + (Math.random() * 10).toString().replace(".", "");
-}
-dragonblocks.getModpath = function(mod){
-	if(dragonblocks.availableMods.indexOf(mod) != -1)
-		return "mods/" + mod;
-	if(dragonblocks.gamemods.indexOf(mod) != -1)
-		return "game/" + mod;
-}
-dragonblocks.getVersion = function(){
-	let version = dragonblocks.settings.version;
-	return "Dragonblocks " + version.major + "." + version.minor + (version.patch ? "." + version.patch : "") + (version.development ? "-dev-" + version.commit : "");
-}
-dragonblocks.start = function(){
-	for(let func of dragonblocks.onStartFunctions)
-		func();
-	setTimeout(_ => {
-		for(let mod of dragonblocks.gamemods)
-			dragonblocks.loadMod(mod);
-		for(let mod of dragonblocks.mods)
-			dragonblocks.loadMod(mod);
-		new dragonblocks.Map();
-		new dragonblocks.Player();
-		if(! dragonblocks.worldIsLoaded)
-			dragonblocks.generateMap();
-		for(let func of dragonblocks.onStartedFunctions)
-			func();
+{
+	dragonblocks = {};
+
+	dragonblocks.backendCall = (call, plain, data) => {
+		data = data || {};
+		data.call = call;
+
+		let fetchFunc = plain ? $.get : $.getJSON;
+
+		let response = fetchFunc({
+			url: "api.php",
+			method: "POST",
+			data: data,
+		});
+
+		return plain ? response.responseText : response.responseJSON;
+	};
+
+	dragonblocks.settings = $.getJSON("settings.json").responseJSON;
+
+	let version = dragonblocks.version = $.getJSON("version.json").responseJSON;
+	version.commit = version.development && (dragonblocks.backendCall("commitID", true) || "?");
+	version.string = "Dragonblocks "
+		+ version.major
+		+ "." + version.minor
+		+ (version.patch ? "." + version.patch : "")
+		+ (version.development ? "-dev-" + version.commit : "");
+
+	dragonblocks.isChromeApp = window.chrome && chrome.app;
+
+	addEventListener("error", event => {
+		if (confirm(event.message + "\nStack trace: \n" + event.error.stack + "\nPlease report this to the dragonblocks developers."))
+			location.href = version.repo + "/issues/new?"
+			+ "title=" + encodeURIComponent(event.message)
+			+ "&body=" + encodeURIComponent(event.error.stack)
 	});
-}
-dragonblocks.onStartFunctions = [];
-dragonblocks.registerOnStart = function(func){
-	dragonblocks.onStartFunctions.push(func);
-}
-dragonblocks.onStartedFunctions = [];
-dragonblocks.registerOnStarted = function(func){
-	dragonblocks.onStartedFunctions.push(func);
-}
-dragonblocks.addFinalStep = function(step){
-	dragonblocks.registerOnStarted(step);
-	dragonblocks.log("dragonblocks.addFinalStep(...) is deprecated. Use dragonblocks.registerOnStarted instead. Trace:");
-	console.trace();
-}
-dragonblocks.quit = function(){
-	for(let func of dragonblocks.onQuitFunctions)
-		func();
-	if(dragonblocks.loggedin)
+
+	dragonblocks.backlog = "";
+
+	dragonblocks.loadModList = _ => {
+		dragonblocks.gamemods = dragonblocks.backendCall("getGamemods");
+		dragonblocks.mods = dragonblocks.backendCall("getMods");
+	};
+
+	dragonblocks.loggedin = dragonblocks.backendCall("isLoggedin");
+	dragonblocks.username = dragonblocks.loggedin ? dragonblocks.backendCall("getUsername", true) : "singleplayer";
+
+	dragonblocks.log = text => {
+		console.log("[Dragonblocks] " + text);
+		dragonblocks.backlog += text + "\n";
+	};
+
+	dragonblocks.error = err => {
+		let error = new Error(err);
+		dragonblocks.backlog += error;
+
+		throw error;
+	};
+
+	dragonblocks.getToken = _ => {
+		return "#" + (Math.random() * 10).toString().replace(".", "");
+	};
+
+	dragonblocks.getModInfo = modname => {
+		return dragonblocks.mods[modname] || dragonblocks.gamemods[modname];
+	};
+
+	dragonblocks.getModpath = modname => {
+		return dragonblocks.getModInfo(modname).path;
+	};
+
+	let loadingMods = {};
+
+	let loadMod = modname => {
+		if (loadingMods[modname])
+			dragonblocks.error("Circular Mod Dependencies: " + modname);
+
+		if (dragonblocks.loadedMods[modname])
+			return;
+
+		let modinfo = dragonblocks.getModInfo(modname);
+
+		if (! modinfo)
+			dragonblocks.error("Unresolved Mod Dependencies: " + modname);
+
+		loadingMods[modname] = true;
+
+		for (let dependency of modinfo.dependencies)
+			loadMod(dependency);
+
+		$.getScript(modinfo.path + "/init.js");
+
+		dragonblocks.loadedMods[modname] = modinfo;
+		loadingMods[modname] = false;
+	};
+
+	dragonblocks.start = selectedMods => {
+		dragonblocks.log("Starting");
+
+		for (let func of dragonblocks.onStartCallbacks)
+			func();
+
 		setTimeout(_ => {
-			dragonblocks.save();
+			dragonblocks.loadedMods = {};
+
+			for (let mod in selectedMods)
+				if (selectedMods[mods])
+					loadMod(mod);
+
+			for (let mod in dragonblocks.gamemods)
+				loadMod(mod);
+
+			dragonblocks.map = new dragonblocks.Map();
+			dragonblocks.map.load();
+
+			dragonblocks.player = new dragonblocks.Player();
+
+			dragonblocks.worldIsLoaded || dragonblocks.generateMap();
+
+			for (let func of dragonblocks.onStartedCallbacks)
+				func();
+		});
+	};
+
+	dragonblocks.onStartCallbacks = [];
+	dragonblocks.registerOnStart = func => {
+		dragonblocks.onStartCallbacks.push(func);
+	};
+
+	dragonblocks.onStartedCallbacks = [];
+	dragonblocks.registerOnStarted = func => {
+		dragonblocks.onStartedCallbacks.push(func);
+	};
+
+	dragonblocks.quit = _ => {
+		for (let func of dragonblocks.onQuitCallbacks)
+			func();
+
+		if (dragonblocks.loggedin)
+			setTimeout(_ => {
+				dragonblocks.save();
+				location.reload();
+			});
+		else
 			location.reload();
-		});
-	else
-		location.reload();
+	};
+
+	dragonblocks.onQuitCallbacks = [];
+	dragonblocks.registerOnQuit = func => {
+		dragonblocks.onQuitCallbacks.push(func);
+	};
+
+	let modules = [
+		"assets",
+		"key_handler",
+		"gui",
+		"mapgen",
+		"world",
+		"item",
+		"node",
+		"tool",
+		"group",
+		"builtin",
+		"map_node",
+		"map",
+		"item_stack",
+		"inventory",
+		"out_stack",
+		"inventory_group",
+		"hudbar",
+		"inventory_container",
+		"creative_inventory",
+		"recipe",
+		"craftfield",
+		"menu",
+		"skin",
+		"entity",
+		"map_interaction",
+		"spawned_entity",
+		"item_entity",
+		"falling_node",
+		"timer",
+		"player",
+		"pixel_manipulator",
+		"chat",
+		"chatcommands",
+		"mainmenu",
+	];
+
+	let moduleCount = modules.length;
+
+	let status = document.getElementById("elidragon.status");
+	let loadbar = document.getElementById("elidragon.loadbar");
+
+	let loadNextModuleRecursive = _ => {
+		let nextModule = modules.shift();
+
+		if (nextModule) {
+			let filename = nextModule + ".js";
+			status.innerHTML = filename;
+
+			$.getScript({
+				url: "engine/" + filename,
+				async: true,
+				cache: false,
+				success: _ => {
+					loadbar.style.width = (moduleCount - modules.length) / moduleCount * 100 + "%";
+					loadNextModuleRecursive();
+				},
+			});
+		}
+	};
+
+	loadNextModuleRecursive();
 }
-dragonblocks.onQuitFunctions = [];
-dragonblocks.registerOnQuit = function(func){
-	dragonblocks.onQuitFunctions.push(func);
-}
-dragonblocks.loadWorld = function(world){
-	dragonblocks.worldIsLoaded = true;
-	dragonblocks.worldname = world;
-	dragonblocks.world = $.getJSON("worlds/" + world + "/world.json").responseJSON;
-	dragonblocks.mods = dragonblocks.world.mods;
-	dragonblocks.start();
-}
-dragonblocks.createWorld = function(properties){
-	dragonblocks.worldIsLoaded = false;
-	dragonblocks.worldname = properties.worldname;
-	dragonblocks.world = dragonblocks.getEmptyWorld();
-	dragonblocks.entities["dragonblocks:player"].meta.creative = (properties.gamemode == "creative");
-	for(mod in properties.mods)
-		properties.mods[mod] && dragonblocks.mods.push(mod);
-	dragonblocks.mapgen.selected = properties.mapgen;
-	dragonblocks.start();
-}
-dragonblocks.loadedMods = [];
-dragonblocks.loadingMods = {};
-dragonblocks.loadMod = function(modname){
-	if(! modname)
-		return;
-	if(dragonblocks.loadingMods[modname])
-		dragonblocks.error("Circular Mod Dependencies: " + modname);
-	if(dragonblocks.loadedMods.indexOf(modname) != -1)
-		return;
-	if(dragonblocks.gamemods.indexOf(modname) != -1)
-		var modpath = "game/" + modname;
-	else if(dragonblocks.availableMods.indexOf(modname) != -1)
-		var modpath = "mods/" + modname;
-	else
-		dragonblocks.error("Unsolved Mod Dependencies: " + modname);
-	let dependencyRequest = $.get(modpath + "/dependencies.txt");
-	if(dependencyRequest.status == 200){
-		let dependencies = dependencyRequest.responseText.split("\n");
-		for(let dependency of dependencies)
-			dragonblocks.loadMod(dependency);
-	}
-	$.getScript(modpath + "/init.js");
-	dragonblocks.loadedMods.push(modname);
-	dragonblocks.loadingMods[modname] = false;
-}
-dragonblocks.modules = [
-	"ressources",
-	"key_handler",
-	"gui",
-	"mapgen",
-	"world",
-	"item",
-	"node",
-	"tool",
-	"group",
-	"builtin",
-	"map_node",
-	"map",
-	"itemstack",
-	"inventory",
-	"inventory_group",
-	"hudbar",
-	"inventory_container",
-	"creative_inventory",
-	"recipe",
-	"craftfield",
-	"menu",
-	"skin",
-	"entity",
-	"map_interaction",
-	"spawned_entity",
-	"item_entity",
-	"falling_node",
-	"timer",
-	"player",
-	"pixel_manipulator",
-	"chat",
-	"chatcommands",
-	"mainmenu",
-];
-dragonblocks.moduleCount = dragonblocks.modules.length;
-dragonblocks.loadModule = function(){
-	if(dragonblocks.modules[0]){
-		document.getElementById("elidragon.status").innerHTML = dragonblocks.modules[0] + ".js";
-		$.getScript({
-			url: "engine/" + dragonblocks.modules.shift() + ".js",
-			async: true,
-			success: _ => {
-				document.getElementById("elidragon.loadbar").style.width = (dragonblocks.moduleCount - dragonblocks.modules.length) / dragonblocks.moduleCount * 100 + "%";
-				dragonblocks.loadModule();
-			},
-		});
-	}
-}
-dragonblocks.loadModule();

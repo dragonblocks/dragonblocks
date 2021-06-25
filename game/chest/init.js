@@ -9,7 +9,7 @@ dragonblocks.registerNode({
 		let meta = dragonblocks.getNode(x, y).meta;
 		meta.inventory = new dragonblocks.Inventory(32, 8);
 		if(meta.inventoryString)
-			meta.inventory.parse(meta.inventoryString);
+			meta.inventory.deserialize(meta.inventoryString);
 	},
 	onclick: (x, y) => {
 		let meta = dragonblocks.getNode(x, y).meta;
@@ -19,7 +19,7 @@ dragonblocks.registerNode({
 		dragonblocks.player.onNextInventoryClose = _ => {
 			dragonblocks.player.resetInventoryElements();
 			dragonblocks.nodes["chest:chest"].playSound("close");
-			meta.inventoryString = meta.inventory.stringify();
+			meta.inventoryString = meta.inventory.serialize();
 		};
 	},
 	ondig: (x, y) => {

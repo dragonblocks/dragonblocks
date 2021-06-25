@@ -1,7 +1,7 @@
 /*
- * group.js
+ * out_stack.js
  *
- * Copyright 2020 Elias Fleckenstein <eliasfleckenstein@web.de>
+ * Copyright 2021 Elias Fleckenstein <eliasfleckenstein@web.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,24 +21,27 @@
  *
  */
 
-dragonblocks.Group = class
-{
-	constructor(def)
-	{
-		def || dragonblocks.error("Cannot register group: Missing argument");
-
-		dblib.copy(this, def);
-
-		this.name || dragonblocks.error("Cannot register group: Missing name");
-
-		dragonblocks.groups[this.name] = this;
-		dragonblocks.registeredGroups.push(this);
-	}
+dragonblocks.addInventoryMenuDisplay = elem => {
+	return document.body.insertBefore(elem, dragonblocks.outStack.getDisplay());
 };
 
-dragonblocks.groups = {};
-dragonblocks.registeredGroups = [];
+setTimeout(_ => {
+	let out = dragonblocks.outStack = new dragonblocks.ItemStack();
 
-dragonblocks.registerGroup = def => {
-	new dragonblocks.Group(def);
-};
+	out.draw(document.body, 0, 0);
+	out.getDisplay().style.position = "fixed";
+
+	out.addEventListener("redraw", _ => {
+		let display = out.getDisplay();
+		display.style.backgroundColor = "";
+		display.style.border = "none";
+	});
+
+	addEventListener("mousemove", event => {
+		let display = out.getDisplay();
+		display.style.left = event.clientX + 5 + "px";
+		display.style.top = event.clientY + 5 + "px";
+	});
+
+	out.update();
+});
