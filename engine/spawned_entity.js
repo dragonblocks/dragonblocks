@@ -327,15 +327,7 @@ dragonblocks.SpawnedEntity = class
 			if (y - entityY <= 0.01) {
 				let node = dragonblocks.getNode(x, y);
 
-				if (! node)
-					return true;
-
-				let nodeDef = node.toNode();
-
-				if (! nodeDef)
-					return true;
-
-				if (nodeDef.mobstable)
+				if (! node || node.mobstable)
 					return true;
 			}
 		}
