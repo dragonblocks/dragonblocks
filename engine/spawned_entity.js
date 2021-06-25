@@ -318,13 +318,36 @@ dragonblocks.SpawnedEntity = class
 		this.physicsResetY();
 	}
 
+	canJump()
+	{
+		for (let x = Math.floor(this.x); x <= Math.ceil(this.x + this.width - 0.01) - 1; x++) {
+			let entityY = this.y + this.height;
+			let y = Math.ceil(entityY);
+
+			if (y - entityY <= 0.01) {
+				let node = dragonblocks.getNode(x, y);
+
+				if (! node)
+					return true;
+
+				let nodeDef = node.toNode();
+
+				if (! nodeDef)
+					return true;
+
+				if (nodeDef.mobstable)
+					return true;
+			}
+		}
+	}
+
 	jump()
 	{
-		if (this.vy == -this.verticalSpeed)
+		if (! this.canJump())
 			return;
 
 		this.jumping = true;
- 		this.vy = -this.verticalSpeed;
+		this.vy = -this.verticalSpeed;
 	}
 
 	stopJump()
