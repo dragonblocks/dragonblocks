@@ -32,6 +32,14 @@
 	let logo = center.appendChild(document.createElement("img"));
 	logo.src = "textures/logo-mainmenu.png";
 
+	let splash = mainmenu.appendChild(document.createElement("div"));
+	splash.style.position = "absolute";
+	splash.style.transform = "rotate(-15deg)";
+	splash.style.color = "yellow";
+	splash.style.fontSize = "30px";
+
+	let splashes = $.getJSON("splashes.json").responseJSON;
+
 	let status = center.appendChild(document.createElement("h1"));
 	status.style.fontSize = "50px";
 	status.style.display = "none";
@@ -414,11 +422,25 @@
 		status.innerHTML = "Saving...";
 	});
 
+	let updateSplash = _ => {
+		splash.style.left = (logo.x + logo.width - splash.clientWidth / 2) + "px";
+		splash.style.top = (logo.y + logo.height / 3 * 2 - splash.clientHeight / 2) + "px";
+	};
+
 	let initMainMenu = _ => {
 		document.body.style.backgroundColor = "skyblue";
 		document.getElementById("elidragon").remove();
 		content.style.width = logo.offsetWidth + "px";
 		mainmenu.style.visibility = "visible";
+
+		splash.innerHTML = splashes[Math.floor(Math.random() * splashes.length)];
+		updateSplash();
+
+		let counter = 0;
+		setInterval(_ => {
+			splash.style.fontSize = Math.sin(counter++ / 100 * Math.PI) * 5 + 30 + "px";
+			updateSplash();
+		});
 
 		dragonblocks.enterMainMenu();
 	};
