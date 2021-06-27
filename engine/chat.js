@@ -67,6 +67,7 @@ dragonblocks.Chat = class
 		input.style.left = "0px";
 		input.style.backgroundColor = "black";
 		input.style.border = "none";
+		input.style.outline = "none";
 		input.style.opacity = "0.7";
 		input.style.fontSize = "20px";
 		input.style.color = "white";
