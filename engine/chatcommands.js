@@ -25,16 +25,16 @@ dragonblocks.chatcommands = {};
 
 dragonblocks.registerChatcommand = def => {
 	if (! def || ! def.name)
-		return;
+		dragonblocks.error("Cannot register chat command: Invalid or missing argument");
 
 	def.desc = def.desc || def.description || "No description";
 	def.param = def.param || def.params || def.parameter || def.parameters || "";
 
 	dragonblocks.chatcommands[def.name] = def;
-}
+};
 
 dragonblocks.registerOnChatMessage(msg => {
-	if( ! msg.startsWith("/"))
+	if (! msg.startsWith("/"))
 		return true;
 
 	msg += " ";
@@ -47,8 +47,7 @@ dragonblocks.registerOnChatMessage(msg => {
 	if (dragonblocks.chatcommands[command]) {
 		try {
 			dragonblocks.chatcommands[command].func(arg);
-		}
-		catch (err) {
+		} catch (err) {
 			dragonblocks.chatMessage("!HTML <span style=\"color: red; font-width: bold\"> " + err.toString() + "</span>");
 		}
 	} else {
