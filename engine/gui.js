@@ -66,25 +66,22 @@ dragonblocks.gui.Box = class extends EventTarget
 		if (def)
 			dblib.copy(this, def);
 
-		this.id = "dragonblocks.gui.box[" + dragonblocks.getToken() + "]";
-
 		this.x = 0;
 		this.y = 0;
 
 		this.dragging = false;
 
-		let display = document.body.appendChild(document.createElement("div"));
-		display.id = this.id;
-		display.style.width = this.big ? "700px" : "500px";
-		display.style.height = this.big ? "500px" : "300px";
-		display.style.position = "fixed";
-		display.style.backgroundColor = "#7E7E7E";
-		display.style.visibility = "hidden";
-		dblib.center(display);
-		dblib.centerVertical(display);
+		this.display = document.body.appendChild(document.createElement("div"));
+		this.display.style.width = this.big ? "700px" : "500px";
+		this.display.style.height = this.big ? "500px" : "300px";
+		this.display.style.position = "fixed";
+		this.display.style.backgroundColor = "#7E7E7E";
+		this.display.style.visibility = "hidden";
+		dblib.center(this.display);
+		dblib.centerVertical(this.display);
 
 		if (this.scroll)
-			display.style.overflowY = "scroll";
+			this.display.style.overflowY = "scroll";
 
 		this.moveable && this.addMoveField();
 		this.closeable && this.addCloseField();
@@ -93,7 +90,6 @@ dragonblocks.gui.Box = class extends EventTarget
 	addMoveField()
 	{
 		let moveField = this.create("div");
-		moveField.id = this.id + ".moveField";
 		moveField.style.position = "absolute";
 		moveField.style.left = "0px";
 		moveField.style.top = "0px";
@@ -104,23 +100,17 @@ dragonblocks.gui.Box = class extends EventTarget
 		moveField.style.cursor = "move";
 
 		let self = this;
-		let display = this.getDisplay();
 
-		display.addEventListener("mousedown", event => {
-			if (event.srcElement.id != moveField.id)
-				return;
-
+		moveField.addEventListener("mousedown", event => {
 			self.x = event.clientX;
 			self.y = event.clientY;
 
 			self.dragging = true;
 		});
 
-		display.addEventListener("mousemove", event => {
+		addEventListener("mousemove", event => {
 			if (! self.dragging)
 				return;
-
-			let display = self.getDisplay();
 
 			let x = self.x - event.clientX;
 			let y = self.y - event.clientY;
@@ -128,8 +118,8 @@ dragonblocks.gui.Box = class extends EventTarget
 			self.x = event.clientX;
 			self.y = event.clientY;
 
-			display.style.left = display.offsetLeft - x + "px";
-			display.style.top = display.offsetTop - y + "px";
+			self.display.style.left = self.display.offsetLeft - x + "px";
+			self.display.style.top = self.display.offsetTop - y + "px";
 		});
 
 		addEventListener("mouseup", event => {
@@ -140,7 +130,6 @@ dragonblocks.gui.Box = class extends EventTarget
 	addCloseField()
 	{
 		let closeField = this.create("div");
-		closeField.id = this.id + ".closeField";
 		closeField.style.position = "absolute";
 		closeField.style.right = "0px";
 		closeField.style.top = "0px";
@@ -156,19 +145,14 @@ dragonblocks.gui.Box = class extends EventTarget
  		});
 	}
 
-	getDisplay()
-	{
-		return document.getElementById(this.id);
-	}
-
 	setContent(html)
 	{
-		this.getDisplay().innerHTML = html;
+		this.display.innerHTML = html;
 	}
 
 	open()
 	{
-		this.getDisplay().style.visibility = "visible";
+		this.display.style.visibility = "visible";
 
 		this.layer && dragonblocks.gui.openLayer();
 		this.keylock && dragonblocks.keyHandler.lockAll();
@@ -178,7 +162,7 @@ dragonblocks.gui.Box = class extends EventTarget
 
 	close()
 	{
-		this.getDisplay().style.visibility = "hidden";
+		this.display.style.visibility = "hidden";
 
 		this.layer && dragonblocks.gui.closeLayer();
 		this.keylock && dragonblocks.keyHandler.unlockAll();
@@ -188,7 +172,7 @@ dragonblocks.gui.Box = class extends EventTarget
 
 	add(elem)
 	{
-		return this.getDisplay().appendChild(elem);
+		return this.display.appendChild(elem);
 	}
 
 	create(tag)
