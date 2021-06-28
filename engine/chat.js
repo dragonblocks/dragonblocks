@@ -29,7 +29,7 @@ dragonblocks.Chat = class
 		this.history = -1;
 		this.lines = dragonblocks.settings.chat.lines;
 
-		this.addGraphics();
+		this.initGraphics();
 		this.clear();
 
 		dragonblocks.keyHandler.down("t", _ => {
@@ -38,52 +38,50 @@ dragonblocks.Chat = class
 
 		dragonblocks.keyHandler.down("/", event => {
 			dragonblocks.chat.open();
-			document.getElementById("dragonblocks.chat.input").value = "/";
+			this.inputDisplay.value = "/";
 		});
 	}
 
-	addGraphics()
+	initGraphics()
 	{
-		let display = document.body.appendChild(document.createElement("div"));
-		display.id = "dragonblocks.chat";
-		display.style.position = "fixed";
-		display.style.top = "0px";
-		display.style.left = "0px";
-		display.style.backgroundColor = "black";
-		display.style.opacity = "0.7";
-		display.style.height = 23 * this.lines + "px";
-		display.style.fontSize = "20px";
-		display.style.color = "white";
-		display.style.width = "100%";
-		display.style.fontFamily = "monospace";
-		display.style.overflowY = "scroll";
-		display.style.scrollbarWidth = "none";
-		display.style.visibility = "hidden";
+		this.display = document.body.appendChild(document.createElement("div"));
+		this.display.style.position = "fixed";
+		this.display.style.top = "0px";
+		this.display.style.left = "0px";
+		this.display.style.backgroundColor = "black";
+		this.display.style.opacity = "0.7";
+		this.display.style.height = 23 * this.lines + "px";
+		this.display.style.fontSize = "20px";
+		this.display.style.color = "white";
+		this.display.style.width = "100%";
+		this.display.style.fontFamily = "monospace";
+		this.display.style.overflowY = "scroll";
+		this.display.style.scrollbarWidth = "none";
+		this.display.style.visibility = "hidden";
 
-		let input = document.body.appendChild(document.createElement("input"));
-		input.id = "dragonblocks.chat.input";
-		input.style.position = "fixed";
-		input.style.top = 23 * this.lines + "px";
-		input.style.left = "0px";
-		input.style.backgroundColor = "black";
-		input.style.border = "none";
-		input.style.outline = "none";
-		input.style.opacity = "0.7";
-		input.style.fontSize = "20px";
-		input.style.color = "white";
-		input.style.height = "23px";
-		input.style.width = "100%";
-		input.style.caretWidth = "30px";
-		input.style.caretHeight = "20px";
-		input.style.fontFamily = "monospace";
-		input.style.visibility = "hidden";
+		this.inputDisplay = document.body.appendChild(document.createElement("input"));
+		this.inputDisplay.style.position = "fixed";
+		this.inputDisplay.style.top = 23 * this.lines + "px";
+		this.inputDisplay.style.left = "0px";
+		this.inputDisplay.style.backgroundColor = "black";
+		this.inputDisplay.style.border = "none";
+		this.inputDisplay.style.outline = "none";
+		this.inputDisplay.style.opacity = "0.7";
+		this.inputDisplay.style.fontSize = "20px";
+		this.inputDisplay.style.color = "white";
+		this.inputDisplay.style.height = "23px";
+		this.inputDisplay.style.width = "100%";
+		this.inputDisplay.style.caretWidth = "30px";
+		this.inputDisplay.style.caretHeight = "20px";
+		this.inputDisplay.style.fontFamily = "monospace";
+		this.inputDisplay.style.visibility = "hidden";
 
 		let self = this;
 
-		input.addEventListener("keydown", event => {
+		this.inputDisplay.addEventListener("keydown", event => {
 			switch (event.key) {
 				case "Enter":
-					let message = event.srcElement.value;
+					let message = self.inputDisplay.value;
 					event.srcElement.value = "";
 
 					if (message == "")
@@ -101,17 +99,17 @@ dragonblocks.Chat = class
 					break;
 
 				case "ArrowUp":
-					event.srcElement.value = self.historyUp();
+					self.inputDisplay.value = self.historyUp();
 					break;
 
 				case "ArrowDown":
-					event.srcElement.value = self.historyDown();
+					self.inputDisplay.value = self.historyDown();
 					break;
 			}
 		});
 
-		input.addEventListener("input", event => {
-			self.input[self.input.length - 1] = event.srcElement.value;
+		this.inputDisplay.addEventListener("input", event => {
+			self.input[self.input.length - 1] = self.inputDisplay;
 		});
 	}
 
@@ -119,11 +117,9 @@ dragonblocks.Chat = class
 	{
 		dragonblocks.keyHandler.lockAll();
 
-		document.getElementById("dragonblocks.chat").style.visibility = "visible";
-
-		let input = document.getElementById("dragonblocks.chat.input");
-		input.style.visibility = "visible";
-		input.focus();
+		this.display.style.visibility = "visible";
+		this.inputDisplay.style.visibility = "visible";
+		this.inputDisplay.focus();
 	}
 
 	close()
@@ -132,11 +128,9 @@ dragonblocks.Chat = class
 			dragonblocks.keyHandler.unlockAll();
 		});
 
-		document.getElementById("dragonblocks.chat").style.visibility = "hidden";
-
-		let input = document.getElementById("dragonblocks.chat.input");
-		input.style.visibility = "hidden";
-		input.blur();
+		this.display.style.visibility = "hidden";
+		this.inputDisplay.style.visibility = "hidden";
+		this.inputDisplay.blur();
 	}
 
 	write(text)
@@ -150,9 +144,8 @@ dragonblocks.Chat = class
 
 		text += "<br>";
 
-		let display = document.getElementById("dragonblocks.chat");
-		display.innerHTML += text;
-		display.lastChild.scrollIntoView();
+		this.display.innerHTML += text;
+		this.display.lastChild.scrollIntoView();
 	}
 
 	send(input)
@@ -186,7 +179,7 @@ dragonblocks.Chat = class
 
 	clear()
 	{
-		document.getElementById("dragonblocks.chat").innerHTML = "<br>".repeat(this.lines);
+		this.display.innerHTML = "<br>".repeat(this.lines);
 	}
 };
 
