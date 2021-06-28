@@ -24,7 +24,7 @@ doors.registerDoor({
 });
 plants.registerTree({
 	name: "apple",
-	tree: new dragonblocks.PixelManipulator([
+	tree: new dragonblocks.Schematic([
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
@@ -38,7 +38,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "pine",
-	tree: new dragonblocks.PixelManipulator([
+	tree: new dragonblocks.Schematic([
 		["", "", "leaves", "", ""],
 		["", "", "leaves", "", ""],
 		["", "leaves", "leaves", "leaves", ""],
@@ -56,7 +56,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "acacia",
-	tree: new dragonblocks.PixelManipulator([
+	tree: new dragonblocks.Schematic([
 		["", "", "leaves", "leaves", "leaves", "", ""],
 		["leaves", "leaves", "leaves", "tree", "leaves", "leaves", "leaves"],
 		["leaves", "tree", "leaves", "tree", "leaves", "tree", "leaves"],
@@ -71,7 +71,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "jungle",
-	tree: new dragonblocks.PixelManipulator([
+	tree: new dragonblocks.Schematic([
 		["", "leaves", "leaves", "leaves", ""],
 		["leaves", "leaves", "leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves", "leaves", "leaves"],
@@ -94,7 +94,7 @@ plants.registerTree({
 });
 plants.registerTree({
 	name: "aspen",
-	tree: new dragonblocks.PixelManipulator([
+	tree: new dragonblocks.Schematic([
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],
 		["leaves", "leaves", "leaves"],

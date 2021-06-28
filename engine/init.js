@@ -203,7 +203,7 @@
 		"falling_node",
 		"timer",
 		"player",
-		"pixel_manipulator",
+		"schematic",
 		"chat",
 		"chatcommands",
 		"mainmenu",

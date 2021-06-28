@@ -59,7 +59,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 	let snode = dragonblocks.setNode;
 	let gnode = dragonblocks.getNode;
 
-	let pm = dragonblocks.PixelManipulator;
+	let schem = dragonblocks.Schematic;
 
 	let rand = dblib.random;
 
@@ -337,35 +337,35 @@ dragonblocks.mapgen.list["v3"] = _ => {
 		};
 
 		function structure(x, y, mat) {
-			new pm([["§" + mat, mat], [mat, mat]])
+			new schem([["§" + mat, mat], [mat, mat]])
 				.addFunction(belowGround)
 				.apply(x, y);
 
 			let sides = [
-				new pm([[mat, mat], ["§", ""]]),
-				new pm([["§", "", mat], ["", "", mat]]),
-				new pm([["§", ""], ["", ""], [mat, mat]]),
-				new pm([[mat, "§"], [mat, ""]]),
+				new schem([[mat, mat], ["§", ""]]),
+				new schem([["§", "", mat], ["", "", mat]]),
+				new schem([["§", ""], ["", ""], [mat, mat]]),
+				new schem([[mat, "§"], [mat, ""]]),
 			];
 
 			for (let side of sides)
 				side.addFunction(belowGround);
 
 			let moresides = [
-				new pm([[mat, mat], ["", ""], ["§", ""]]),
-				new pm([["§", "", "", mat], ["", "", "", mat]]),
-				new pm([["§", ""], ["", ""], ["", ""], [mat, mat]]),
-				new pm([[mat, "", "§"], [mat, "", ""]]),
+				new schem([[mat, mat], ["", ""], ["§", ""]]),
+				new schem([["§", "", "", mat], ["", "", "", mat]]),
+				new schem([["§", ""], ["", ""], ["", ""], [mat, mat]]),
+				new schem([[mat, "", "§"], [mat, "", ""]]),
 			];
 
 			for (let moreside of moresides)
 				moreside.addFunction(belowGround);
 
 			let corners = [
-				new pm([[mat, ""], ["", "§"]]),
-				new pm([["", "", mat], ["§", "", ""]]),
-				new pm([["§", "", ""], ["", "", ""], ["", "", mat]]),
-				new pm([["§", "", ""], ["", "", ""], ["", "", mat]]),
+				new schem([[mat, ""], ["", "§"]]),
+				new schem([["", "", mat], ["§", "", ""]]),
+				new schem([["§", "", ""], ["", "", ""], ["", "", mat]]),
+				new schem([["§", "", ""], ["", "", ""], ["", "", mat]]),
 			];
 
 			for (let corner of corners)
@@ -399,7 +399,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 		let cave = (x, y, r) => {
 			r *= 2;
 
-			let cavepm = new pm([
+			let caveschem = new schem([
 				["",    "air",  "air", "air",    ""],
 				["air", "air",  "air", "air", "air"],
 				["air", "air", "§air", "air", "air"],
@@ -407,7 +407,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 				["",    "air",  "air", "air",    ""],
 			]);
 
-			cavepm.addFunction((node, x, y) => {
+			caveschem.addFunction((node, x, y) => {
 				if (y < ground[x])
 					return false;
 
@@ -415,7 +415,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 					cave(x, y, r);
 			});
 
-			cavepm.apply(x, y);
+			caveschem.apply(x, y);
 		};
 
 		let newCave = (x, y) => {

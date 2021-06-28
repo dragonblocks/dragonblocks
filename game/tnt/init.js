@@ -1,5 +1,5 @@
 tnt = {};
-tnt.explosion = new dragonblocks.PixelManipulator([
+tnt.explosion = new dragonblocks.Schematic([
 	["", "air", "air", "air", ""],
 	["air", "air", "air", "air", "air"],
 	["air", "air", "§air", "air", "air"],

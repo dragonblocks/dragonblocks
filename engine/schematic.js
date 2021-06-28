@@ -1,5 +1,5 @@
 /*
- * pixel_manipulator.js
+ * schematic.js
  *
  * Copyright 2020 Elias Fleckenstein <eliasfleckenstein@web.de>
  *
@@ -21,21 +21,21 @@
  *
  */
 
-dragonblocks.PixelManipulator = class
+dragonblocks.Schematic = class
 {
 	constructor(arr)
 	{
 		this.data = [];
 		this.functions = [];
 
-		let pos;
+		let anchor;
 
 		for (let y = 0; y < arr.length; y++) {
 			for (let x = 0; x < arr[y].length; x++) {
 				let node = arr[y][x];
 
 				if (node[0] == "§") {
-					pos = {x: x, y: y};
+					anchor = {x: x, y: y};
 					node = node.slice(1, node.length);
 				}
 
@@ -50,12 +50,12 @@ dragonblocks.PixelManipulator = class
 			}
 		}
 
-		if (! pos)
-			pos = {x: 0, y: 0};
+		if (! anchor)
+			anchor = {x: 0, y: 0};
 
 		for (let pixel of this.data) {
-			pixel.x = pixel.x - pos.x;
-			pixel.y = pixel.y - pos.y;
+			pixel.x = pixel.x - anchor.x;
+			pixel.y = pixel.y - anchor.y;
 		}
 	}
 
