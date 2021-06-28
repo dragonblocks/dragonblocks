@@ -33,7 +33,9 @@
 	logo.src = "textures/logo-mainmenu.png";
 
 	let splash = mainmenu.appendChild(document.createElement("div"));
-	splash.style.position = "absolute";
+	splash.style.position = "fixed";
+	splash.style.overflow = "hidden";
+	splash.style.whiteSpace = "nowrap";
 	splash.style.transform = "rotate(-15deg)";
 	splash.style.color = "yellow";
 	splash.style.fontSize = "30px";
@@ -434,11 +436,13 @@
 		mainmenu.style.visibility = "visible";
 
 		splash.innerHTML = splashes[Math.floor(Math.random() * splashes.length)];
+		let fontSize = Math.min(parseInt(10000 / splash.clientWidth), 30);
+		splash.style.fontSize = fontSize + "px";
 		updateSplash();
 
 		let counter = 0;
 		setInterval(_ => {
-			splash.style.fontSize = Math.sin(counter++ / 100 * Math.PI) * 5 + 30 + "px";
+			splash.style.fontSize = Math.sin(counter++ / 100 * Math.PI) * fontSize / 6 + fontSize + "px";
 			updateSplash();
 		});
 
