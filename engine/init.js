@@ -189,7 +189,7 @@
 		"inventory",
 		"out_stack",
 		"inventory_group",
-		"hudbar",
+		"hotbar",
 		"inventory_container",
 		"creative_inventory",
 		"recipe",

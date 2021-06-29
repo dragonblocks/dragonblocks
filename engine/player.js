@@ -88,12 +88,12 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 		});
 
 		this.tmp.mainInventory.addEventListener("updateStack", _ => {
-			if (self.tmp.hudbar)
-				self.tmp.hudbar.update();
+			if (self.tmp.hotbar)
+				self.tmp.hotbar.update();
 		});
 
-		// Hudbar
-		this.tmp.hudbar = new dragonblocks.Hudbar(this.tmp.mainInventory, 8);					// The hudbar has 8 slots
+		// Hotbar
+		this.tmp.hotbar = new dragonblocks.Hotbar(this.tmp.mainInventory, 8);					// The hotbar has 8 slots
 
 		// Creative Inventory
 		let creativelist = [];
@@ -357,22 +357,22 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 
 	previousItem()
 	{
-		this.tmp.hudbar.previousItem();
+		this.tmp.hotbar.previousItem();
 	}
 
 	nextItem()
 	{
-		this.tmp.hudbar.nextItem();
+		this.tmp.hotbar.nextItem();
 	}
 
 	select(i)
 	{
-		this.tmp.hudbar.select(i);
+		this.tmp.hotbar.select(i);
 	}
 
 	getWieldedItem()
 	{
-		return this.tmp.hudbar.getSelectedItem();
+		return this.tmp.hotbar.getSelectedItem();
 	}
 
 	set onNextInventoryClose(func)
