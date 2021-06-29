@@ -230,6 +230,8 @@ dragonblocks.ItemStack = class extends EventTarget
 
 			if (this.count > 1)
 				countDisplay.innerHTML = this.count;
+			else
+				countDisplay.innerHTML = "";
 		} else {
 			display.title = "";
 			display.style.background = "none";
