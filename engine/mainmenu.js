@@ -300,7 +300,6 @@
 			arrow.style.position = "absolute";
 			arrow.style[dir] = "3px";
 			arrow.style.background = dragonblocks.getTexture("arrow.png");
-			arrow.style.backgroundSize = "cover";
 			arrow.style.cursor = "pointer";
 
 			if (dir == "right")

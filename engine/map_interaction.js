@@ -27,7 +27,6 @@ dragonblocks.MapInteraction = {
 		this.tmp.crackDisplay = this.map.entityContainer.appendChild(document.createElement("div"));
 		this.tmp.crackDisplay.style.position = "absolute";
 		this.tmp.crackDisplay.style.visibility = "hidden";
-		this.tmp.crackDisplay.style.backgroundSize = "cover";
 		this.tmp.crackDisplay.style.height = dragonblocks.settings.mapDisplay.scale + "px";
 		this.tmp.crackDisplay.style.width = dragonblocks.settings.mapDisplay.scale + "px";
 		this.tmp.crackDisplay.style.boxShadow = "0 0 0 1px black inset";
@@ -115,7 +114,6 @@ dragonblocks.MapInteraction = {
 			nodeDef.playSound("dig");
 
 			this.tmp.crackDisplay.style.background = dragonblocks.getTexture("crack" + Math.floor(node.meta.causedDamage / nodeDef.hardness * 5) + ".png");
-			this.tmp.crackDisplay.style.backgroundSize = "cover";
 			this.tmp.crackDisplay.style.zIndex = nodeDef.zIndex || "1";
 
 			this.tmp.digTimeout = setTimeout(_ => {

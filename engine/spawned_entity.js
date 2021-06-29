@@ -246,7 +246,6 @@ dragonblocks.SpawnedEntity = class
 	updateTexture()
 	{
 		this.tmp.display.style.background = dragonblocks.getTexture(this.texture);
-		this.tmp.display.style.backgroundSize = "cover";
 	}
 
 	teleport(x, y)

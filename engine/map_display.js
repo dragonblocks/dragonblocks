@@ -136,7 +136,6 @@ dragonblocks.MapDisplay = class
 
 		if (mapNodeDef) {
 			node.style.background = dragonblocks.getTexture(mapNodeDef.texture);
-			node.style.backgroundSize = "cover";
 			node.style.zIndex = mapNodeDef.zIndex || "1";
 		} else {
 			node.style.background = "black";

@@ -105,7 +105,6 @@ dragonblocks.Hotbar = class
 			slotDisplay.style.background = itemstack.item && dragonblocks.getTexture(itemstack.toItem().texture);
 			if (! slotDisplay.style.backgroundColor || slotDisplay.style.backgroundColor == "initial")
 				slotDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-			slotDisplay.style.backgroundSize = "cover";
 
 			slotCountDisplay.innerHTML = (itemstack.count <= 1) ? "" : itemstack.count;
 

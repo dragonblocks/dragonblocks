@@ -96,7 +96,6 @@ dragonblocks.gui.Box = class extends EventTarget
 		moveField.style.width = this.big ? "50px": "30px";
 		moveField.style.height = this.big ? "50px": "30px";
 		moveField.style.background = dragonblocks.getTexture("move.png");
-		moveField.style.backgroundSize = "cover"
 		moveField.style.cursor = "move";
 
 		let self = this;
@@ -136,7 +135,6 @@ dragonblocks.gui.Box = class extends EventTarget
 		closeField.style.width = this.big ? "50px": "30px";
 		closeField.style.height = this.big ? "50px": "30px";
 		closeField.style.background = dragonblocks.getTexture("close.png");
-		closeField.style.backgroundSize = "cover";
 		closeField.style.cursor = "pointer";
 
 		let self = this;

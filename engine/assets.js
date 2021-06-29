@@ -41,7 +41,7 @@ dragonblocks.getTexture = name => {
 
 	let path = dragonblocks.textures[name];
 
-	return path ? "url(" + path + ")" : name;
+	return path ? "left top/cover url(" + path + ")" : name;
 };
 
 dragonblocks.resolveTextures = elem => {
@@ -55,7 +55,7 @@ dragonblocks.resolveTextures = elem => {
 };
 
 dragonblocks.getSound = name => {
-	if(! name)
+	if (! name)
 		return "";
 
 	return dragonblocks.sounds[name] || name;

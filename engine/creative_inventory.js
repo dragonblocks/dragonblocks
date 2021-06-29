@@ -89,7 +89,6 @@ dragonblocks.CreativeInventory = class extends dragonblocks.Inventory
 			arrow.style.height = dragonblocks.settings.inventory.scale + "px";
 			arrow.style[dir] = "0px";
 			arrow.style.background = dragonblocks.getTexture("arrow.png");
-			arrow.style.backgroundSize = "cover";
 			arrow.style.cursor = "pointer";
 
 			if (dir == "right")

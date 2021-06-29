@@ -227,7 +227,6 @@ dragonblocks.ItemStack = class extends EventTarget
 
 			display.title = item.desc;
 			display.style.background = dragonblocks.getTexture(item.texture);
-			display.style.backgroundSize = "cover";
 
 			if (this.count > 1)
 				countDisplay.innerHTML = this.count;

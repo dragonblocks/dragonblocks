@@ -70,7 +70,6 @@ dragonblocks.registerSkin = def => {
 			skinDisplay.style.width = parseInt(dragonblocks.settings.map.scale) + "px";
 			skinDisplay.style.height = parseInt(dragonblocks.settings.map.scale * 2) + "px";
 			skinDisplay.style.background = dragonblocks.getTexture(def.texture);
-			skinDisplay.style.backgroundSize = "cover";
 			skinDisplay.title = def.name + (def.desc ? "\n" + def.desc : "");
 
 			if (dragonblocks.player.skin == def.name)
