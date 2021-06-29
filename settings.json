@@ -26,5 +26,9 @@
 	},
 	"timer": {
 		"tps": 3
+	},
+	"defaultWorldOptions": {
+		"gamemode": "survival",
+		"mapgen": "v3"
 	}
 }

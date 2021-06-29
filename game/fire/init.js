@@ -10,12 +10,12 @@ fire.playBurnSound = function(){
 	};
 	audio.play();
 }
-fire.catchfire = function(x, y){
-	let mapNode = dragonblocks.getNode(x, y);
+fire.catchfire = function(map, x, y){
+	let mapNode = map.getNode(x, y);
 	if(mapNode && mapNode.toNode().flammable){
 		if(mapNode.toNode().onfire && mapNode.toNode().onfire(x, y) == false)
 			return;
-		dragonblocks.player.place(x, y - 1, "fire:fire");
+		dragonblocks.player.place(map, x, y - 1, "fire:fire");
 	}
 }
 dragonblocks.registerGroup({
@@ -33,26 +33,26 @@ dragonblocks.registerNode({
 		dug: "fire_dug.ogg",
 		place: "",
 	},
-	onset : (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onset: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		meta.fireInterval = setInterval(_ => {
 			if(dblib.random(0, 6) == 0);
 				fire.playBurnSound();
 			for(let ix = x - 1; ix <= x + 1; ix++){
 				for(let iy = y - 1; iy <= y + 2; iy++){
 					if(dblib.random(0, 3) == 0)
-						fire.catchfire(ix, iy);
+						fire.catchfire(map, ix, iy);
 				}
 			}
-			if(! dragonblocks.getNode(x, y + 1) || ! dragonblocks.getNode(x, y + 1).toNode().inGroup("flammable")){
-				if(dblib.random(0, 20) == 0)
-					dragonblocks.setNode(x, y, "air");
+			if (! map.getNode(x, y + 1) || ! map.getNode(x, y + 1).toNode().inGroup("flammable")) {
+				if (dblib.random(0, 20) == 0)
+					map.setNode(x, y, "air");
+			} else if (dblib.random(0, map.getNode(x, y + 1).toNode().hardness * 2) == 0) {
+				dragonblocks.player.dig(map, x, y + 1);
 			}
-			else if(dblib.random(0, dragonblocks.getNode(x, y + 1).toNode().hardness * 2) == 0)
-				dragonblocks.player.dig(x, y + 1);
 		}, 1000);
 	},
-	onremove : (x, y) => {
-		clearInterval(dragonblocks.getNode(x, y).meta.fireInterval);
+	onremove: (map, x, y) => {
+		clearInterval(map.getNode(x, y).meta.fireInterval);
 	}
 });

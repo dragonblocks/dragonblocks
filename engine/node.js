@@ -51,33 +51,33 @@ dragonblocks.Node = class extends dragonblocks.Item
 			let oldOnset = this.onset;
 			let self = this;
 
-			this.onset = (x, y) => {
-				let meta = dragonblocks.getNode(x, y).meta;
+			this.onset = (map, x, y) => {
+				let meta = map.getNode(x, y).meta;
 
 				meta.liquidInterval = setInterval(_ => {
 					for(let [ix, iy] of [[x + 1, y], [x - 1, y], [x, y + 1]]){
-						let node = dragonblocks.getNode(ix, iy);
+						let node = map.getNode(ix, iy);
 
 						if (! node || node.stable || node.toNode().liquid)
 							continue;
 
-						dragonblocks.setNode(ix, iy, self.name);
+						map.setNode(ix, iy, self.name);
 					}
 				}, self.liquidTickSpeed || 2000);
 
 				if (oldOnset)
-					oldOnset(x, y);
+					oldOnset(map, x, y);
 
 				return meta;
 			};
 
 			let oldOnremove = this.onremove;
 
-			this.onremove = (x, y) => {
-				clearInterval(dragonblocks.getNode(x, y).meta.liquidInterval);
+			this.onremove = (map, x, y) => {
+				clearInterval(map.getNode(x, y).meta.liquidInterval);
 
 				if (oldOnremove)
-					oldOnremove(x, y);
+					oldOnremove(map, x, y);
 			};
 		}
 	}
@@ -89,39 +89,4 @@ dragonblocks.registerNode = def => {
 	let nodeDef = new dragonblocks.Node(def);
 	dragonblocks.nodes[nodeDef.name] = nodeDef;
 	dragonblocks.registeredNodes.push(nodeDef);
-};
-
-dragonblocks.onSetNodeCallbacks = [];
-dragonblocks.registerOnSetNode = func => {
-	dragonblocks.onSetNodeCallbacks.push(func);
-};
-
-dragonblocks.onRemoveNodeCallbacks = [];
-dragonblocks.registerOnRemoveNode = func => {
-	dragonblocks.onRemoveNodeCallbacks.push(func);
-};
-
-dragonblocks.onPlaceNodeCallbacks = [];
-dragonblocks.registerOnPlaceNode = func => {
-	dragonblocks.onPlaceNodeCallbacks.push(func);
-};
-
-dragonblocks.onDigNodeCallbacks = [];
-dragonblocks.registerOnDigNode = func => {
-	dragonblocks.onDigNodeCallbacks.push(func);
-};
-
-dragonblocks.onClickNodeCallbacks = [];
-dragonblocks.registerOnClickNode = func => {
-	dragonblocks.onClickNodeCallbacks.push(func);
-};
-
-dragonblocks.onActivateNodeCallbacks = [];
-dragonblocks.registerOnActivateNode = func => {
-	dragonblocks.onActivateNodeCallbacks.push(func);
-};
-
-dragonblocks.onPunchNodeCallbacks = [];
-dragonblocks.registerOnPunchNode = func => {
-	dragonblocks.onPunchNodeCallbacks.push(func);
 };

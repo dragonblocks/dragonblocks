@@ -17,7 +17,7 @@ plants.registerTree = function(obj){
 	let texture = "plants_" + obj.name;
 	obj.tree.replace("leaves", name + "_leaves");
 	obj.tree.replace("tree", name + "_tree");
-	obj.tree.addFunction((node, x, y) => {
+	obj.tree.addFunction((node, map, x, y) => {
 		if(node.stable && node.name != name + "_sapling")
 			return false;
 	});
@@ -28,14 +28,16 @@ plants.registerTree = function(obj){
 		texture: texture + "_sapling.png",
 		groups: ["snappy"],
 		hardness: 2,
-		onset: (x, y) => {
-			dragonblocks.setTimer("growTimer", dblib.random(obj.growtimeMin, obj.growtimeMax), _ => {obj.tree.apply(x, y);}, dragonblocks.getNode(x, y).meta);
+		onset: (map, x, y) => {
+			dragonblocks.setTimer("growTimer", dblib.random(obj.growtimeMin, obj.growtimeMax), _ => {
+				obj.tree.apply(map, x, y);
+			}, map.getNode(x, y).meta);
 		},
-		onremove: (x, y) => {
-			dragonblocks.clearTimer("growTimer", dragonblocks.getNode(x, y).meta);
+		onremove: (map, x, y) => {
+			dragonblocks.clearTimer("growTimer", map.getNode(x, y).meta);
 		},
-		onplace: (x, y) => {
-			if(dragonblocks.getNode(x, y + 1) && ! dragonblocks.getNode(x, y + 1).toNode().inGroup("dirt"))
+		onplace: (map, x, y) => {
+			if(map.getNode(x, y + 1) && ! map.getNode(x, y + 1).toNode().inGroup("dirt"))
 				return false;
 		},
 		desc: obj.desc + " " + obj.saplingName,
@@ -53,8 +55,10 @@ plants.registerTree = function(obj){
 		desc: obj.desc + " " + obj.treeName,
 		stacksize: obj.stacksize,
 		flammable: true,
-		onplace: (x, y) => {
-			setTimeout(_ => {dragonblocks.getNode(x, y).mobstable = true})
+		onplace: (map, x, y) => {
+			setTimeout(_ => {
+				map.getNode(x, y).mobstable = true;
+			});
 		}
 	});
 	dragonblocks.registerNode({
@@ -106,35 +110,35 @@ plants.registerSimple = function(obj){
 		groups: obj.groups,
 		hardness: obj.hardness,
 		desc: obj.desc || dblib.humanFormat(obj.name),
-		onset: (x, y) => {
-			let meta = dragonblocks.getNode(x, y).meta;
+		onset: (map, x, y) => {
+			let meta = map.getNode(x, y).meta;
 			meta.growTime = dblib.random(obj.growtimeMin, obj.growtimeMax);
 			meta.growInterval = setInterval(_ => {
-				if(! dragonblocks.getNode(x, y - 1) || dragonblocks.getNode(x, y - 1).stable)
+				if(! map.getNode(x, y - 1) || map.getNode(x, y - 1).stable)
 					return meta.growTime = dblib.random(obj.growtimeMin, obj.growtimeMax);
 				let iy = y + 1;
 				while(true){
-					if(! dragonblocks.getNode(x, iy))
+					if(! map.getNode(x, iy))
 						return meta.growTime = dblib.random(obj.growtimeMin, obj.growtimeMax);
 					else if(iy == y + obj.maxHeight)
 						return meta.growTime = dblib.random(obj.growtimeMin, obj.growtimeMax);
-					else if(! dragonblocks.itemMatch(obj.growOn, dragonblocks.getNode(x, iy)))
+					else if(! dragonblocks.itemMatch(obj.growOn, map.getNode(x, iy)))
 						break;
-					else if(dragonblocks.getNode(x, iy).name == name)
+					else if(map.getNode(x, iy).name == name)
 						iy++;
 					else
 						return meta.growTime = dblib.random(obj.growtimeMin, obj.growtimeMax);
 				}
 				meta.growTime--;
 				if(meta.growTime <= 0)
-					dragonblocks.setNode(x, y - 1, name);
+					map.setNode(x, y - 1, name);
 			}, 1000);
 		},
-		onremove: (x, y) => {
-			  clearInterval(dragonblocks.getNode(x, y).meta.growInterval);
+		onremove: (map, x, y) => {
+			  clearInterval(map.getNode(x, y).meta.growInterval);
 		},
-		ondig: (x, y) => {
-			if(obj.dropAbove && dragonblocks.getNode(x, y - 1) && dragonblocks.getNode(x, y - 1).name == name)
+		ondig: (map, x, y) => {
+			if(obj.dropAbove && map.getNode(x, y - 1) && map.getNode(x, y - 1).name == name)
 				dragonblocks.player.digEnd(x, y - 1);
 		},
 		stacksize: obj.stacksize,

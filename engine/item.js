@@ -83,11 +83,6 @@ dragonblocks.registerItem = def => {
 	new dragonblocks.Item(def);
 };
 
-dragonblocks.onUseItemCallbacks = [];
-dragonblocks.registerOnUseItem = func => {
-	dragonblocks.onUseItemCallbacks.push(func);
-};
-
 dragonblocks.itemMatch = (item1, item2) => {
 	item1 = dragonblocks.items[item1] || dragonblocks.groups[item1] || item1;
 	item2 = dragonblocks.items[item2] || dragonblocks.groups[item2] || item2;

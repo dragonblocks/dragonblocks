@@ -1,7 +1,7 @@
 /*
  * world.js
  *
- * Copyright 2020 Elias Fleckenstein <eliasfleckenstein@web.de>
+ * Copyright 2021 Elias Fleckenstein <eliasfleckenstein@web.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,36 +21,81 @@
  *
  */
 
-dragonblocks.getSavestring = _ => {
-	dragonblocks.world.map = dragonblocks.map;
-	dragonblocks.world.mods = dragonblocks.mods;
-	dragonblocks.world.spawnedEntities = dblib.removeTmp(dragonblocks.spawnedEntities);
+dragonblocks.World = class
+{
+	constructor(properties)
+	{
+		this.name = properties.name;
+		this.isLoaded = properties.isLoaded;
 
-	return JSON.stringify(dragonblocks.world);
-}
+		if (this.isLoaded) {
+			this.load();
+		} else {
+			this.mods = properties.mods;
 
-dragonblocks.save = _ => {
-	if (dragonblocks.loggedin)
-		return dragonblocks.backendCall("saveWorld", true, {name: dragonblocks.worldname, world: dragonblocks.getSavestring()});
+			this.loadMods();
+
+			this.map = new dragonblocks.Map();
+			this.player = new dragonblocks.Player(null, this.map);
+
+			this.player.setGamemode(properties.gamemode);
+			dragonblocks.mapgen.generate(properties.mapgen, this.map);
+		}
+	}
+
+	serialize()
+	{
+		return {
+			mods: this.mods,
+			map: this.map.serialize(),
+			player: this.player.serialize(),
+		};
+	}
+
+	deserialize(data)
+	{
+		this.mods = data.mods;
+
+		this.loadMods();
+
+		this.map = new dragonblocks.Map(data.map);
+		this.player = new dragonblocks.Player(data.player, this.map);
+	}
+
+	save()
+	{
+		if (dragonblocks.loggedin)
+			return dragonblocks.backendCall("saveWorld", true, {name: this.name, world: JSON.stringify(this.serialize())});
+	}
+
+	load()
+	{
+		this.deserialize($.getJSON("worlds/" + this.name + "/world.json").responseJSON);
+	}
+
+	loadMods()
+	{
+		dragonblocks.loadMods(this.mods);
+	}
 };
 
-dragonblocks.checkWorldnameSpelling = name => {
-	return name.match(/^[a-zA-Z0-9]+$/);
-};
+dragonblocks.World.Properties = class
+{
+	constructor(isLoaded)
+	{
+		this.name = "";
+		this.isLoaded = isLoaded;
 
-dragonblocks.loadWorldList = _ => {
-	dragonblocks.worlds = dragonblocks.backendCall("getWorlds");
-};
+		if (! isLoaded) {
+			this.mods = [];
 
-dragonblocks.getEmptyWorld = function(){
-	return {
-		map:{
-			data: Array(dragonblocks.settings.map.width).fill(Array(dragonblocks.settings.map.width).fill(new dragonblocks.MapNode("air"))),
-			width: dragonblocks.settings.map.width,
-			height: dragonblocks.settings.map.height,
-			displayTop: dragonblocks.settings.map.height / 2,
-			displayLeft: dragonblocks.settings.map.width / 2 - 5,
-		},
-		structures: {},
-	};
-}
+			this.gamemode = dragonblocks.settings.defaultWorldOptions.gamemode;
+			this.mapgen = dragonblocks.settings.defaultWorldOptions.mapgen;
+		}
+	}
+
+	checkSpelling()
+	{
+		return this.name.match(/^[a-zA-Z0-9]+$/);
+	}
+};

@@ -1,24 +1,24 @@
 torch = {};
 torch.directions = ["floor", "left", "right", "ceiling"];
-torch.check = function(direction, x, y){
+torch.check = function(direction, map, x, y){
 	switch(direction){
 		case "floor":
-			return ! dragonblocks.getNode(x, y + 1) || dragonblocks.getNode(x, y + 1).stable;
+			return ! map.getNode(x, y + 1) || map.getNode(x, y + 1).stable;
 		case "left":
-			return ! dragonblocks.getNode(x - 1, y) || dragonblocks.getNode(x - 1, y).stable;
+			return ! map.getNode(x - 1, y) || map.getNode(x - 1, y).stable;
 		case "right":
-			return ! dragonblocks.getNode(x + 1, y) || dragonblocks.getNode(x + 1, y).stable;
+			return ! map.getNode(x + 1, y) || map.getNode(x + 1, y).stable;
 		case "ceiling":
-			return ! dragonblocks.getNode(x, y - 1) || dragonblocks.getNode(x, y - 1).stable;
+			return ! map.getNode(x, y - 1) || map.getNode(x, y - 1).stable;
 	}
 }
 dragonblocks.registerItem({
 	name: "torch:torch",
 	desc: "Torch",
 	texture: "torch_torch_floor.png",
-	onuse: (x, y) => {
+	onuse: (map, x, y) => {
 		for(let direction of torch.directions)
-			if(dragonblocks.player.place(x, y, dragonblocks.nodes["torch:torch_" + direction]))
+			if(dragonblocks.player.place(map, x, y, dragonblocks.nodes["torch:torch_" + direction]))
 				return true;
 	}
 });
@@ -33,12 +33,12 @@ for(let direction of torch.directions){
 		texture: "torch_torch_" + direction + ".png",
 		groups:["snappy"],
 		hidden: true,
-		onactivate: (x, y) => {
-			if(! torch.check(direction, x, y))
-				dragonblocks.setNode(x, y, "air");
+		onactivate: (map, x, y) => {
+			if(! torch.check(direction, map, x, y))
+				map.setNode(x, y, "air");
 		},
-		onplace: (x, y) => {
-			if(! torch.check(direction, x, y))
+		onplace: (map, x, y) => {
+			if(! torch.check(direction, map, x, y))
 				return false;
 		}
 	});

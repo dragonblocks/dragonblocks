@@ -28,7 +28,7 @@ dragonblocks.registerEntity({
 	gravity: true,
 	verticalSpeed: 2,
 	onpunch: self => {
-		dragonblocks.dropItem(dragonblocks.player.give(self.meta.itemstring), self.x, self.y);
+		dragonblocks.dropItem(dragonblocks.player.give(self.meta.itemstring), self.map, self.x, self.y);
 		self.despawn();
 	},
 	oncollide: self => {
@@ -36,11 +36,11 @@ dragonblocks.registerEntity({
 	},
 });
 
-dragonblocks.dropItem = (itemstack, x, y) => {
+dragonblocks.dropItem = (itemstack, map, x, y) => {
 	if (! itemstack || ! itemstack.item || ! itemstack.count)
 		return;
 
-	let entity = dragonblocks.spawnEntity("dragonblocks:item_entity", x, y);
+	let entity = map.spawnEntity("dragonblocks:item_entity", x, y);
 	entity.meta.itemstring = itemstack.serialize();
 	entity.texture = itemstack.toItem().texture;
 	entity.updateTexture();

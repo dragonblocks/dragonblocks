@@ -30,11 +30,6 @@ dragonblocks.Entity = class
 		dragonblocks.entities[this.name] = this;
 		dragonblocks.registeredEntities.push(this);
 	}
-
-	spawn(x, y)
-	{
-		return new dragonblocks.SpawnedEntity(this, x, y);
-	}
 };
 
 dragonblocks.entities = {};
@@ -42,11 +37,4 @@ dragonblocks.registeredEntities = [];
 
 dragonblocks.registerEntity = def => {
 	new dragonblocks.Entity(def);
-};
-
-dragonblocks.spawnEntity = (name, x, y) => {
-	let def = dragonblocks.entities[name];
-
-	if (def)
-		return def.spawn(x, y);
 };

@@ -40,8 +40,6 @@
 	splash.style.color = "yellow";
 	splash.style.fontSize = "30px";
 
-	let splashes = $.getJSON("splashes.json").responseJSON;
-
 	let status = center.appendChild(document.createElement("h1"));
 	status.style.fontSize = "50px";
 	status.style.display = "none";
@@ -59,10 +57,14 @@
 			elem.remove();
 	};
 
+	let worlds;
+
 	// Load World Button
 
 	{
 		let loadWorldGUI, worldlistDisplay, noWorldsNotice;
+
+		let worldProperties = new dragonblocks.World.Properties(true);
 
 		if (dragonblocks.loggedin) {
 			onReload.push(_ => {
@@ -80,10 +82,10 @@
 					worldlistDisplay = loadWorldGUI.create("ul");
 				}
 
-				noWorldsNotice.innerHTML = dragonblocks.worlds.length == 0 ? "No Worlds" : "";
+				noWorldsNotice.innerHTML = worlds.length == 0 ? "No Worlds" : "";
 
-				for (let worldname in dragonblocks.worlds) {
-					let world = dragonblocks.worlds[worldname];
+				for (let worldname in worlds) {
+					let world = worlds[worldname];
 
 					if (world.owned) {
 						let worldDisplay = worldlistDisplay.appendChild(document.createElement("li"));
@@ -100,13 +102,8 @@
 							event.srcElement.blur();
 							loadWorldGUI.close();
 
-							dragonblocks.worldIsLoaded = true;
-							dragonblocks.worldname = world.name;
-							dragonblocks.world = $.getJSON("worlds/" + worldname + "/world.json").responseJSON;
-
-							dragonblocks.mods = dragonblocks.world.mods;
-
-							dragonblocks.start();
+							worldProperties.name = world.name;
+							dragonblocks.start(worldProperties);
 						});
 					}
 				}
@@ -128,7 +125,7 @@
 		let createWorldGUI = new dragonblocks.gui.Box();
 		let createButton;
 
-		let worldProperties = {};
+		let worldProperties = new dragonblocks.World.Properties(false);
 
 		let headline = createWorldGUI.create("h1");
 		headline.innerHTML = "New World";
@@ -147,21 +144,21 @@
 		worldnameAlert.style.left = "50px";
 
 		worldnameInput.addEventListener("input", _ => {
-			let worldname = worldnameInput.value;
+			worldProperties.name = worldnameInput.value;
 
-			if(! dragonblocks.loggedin) {
+			if (! dragonblocks.loggedin) {
 				worldnameAlert.textContent = "Warning: You are not logged in and cannot save worlds.";
 				worldnameAlert.style.color = "#FF7D00";
 				createButton.disabled = false;
-			} else if (worldname == "") {
+			} else if (worldProperties.name == "") {
 				worldnameAlert.textContent = "";
 				createButton.disabled = true;
-			} else if (! dragonblocks.checkWorldnameSpelling(worldname)) {
+			} else if (! worldProperties.checkSpelling()) {
 				worldnameAlert.textContent = "The world name contains forbidden characters";
 				worldnameAlert.style.color = "#FF001F";
 				createButton.disabled = true;
-			} else if (dragonblocks.worlds[worldname]) {
-				if (dragonblocks.worlds[worldname].owned) {
+			} else if (worlds[worldProperties.name]) {
+				if (worlds[worldProperties.name].owned) {
 					worldnameAlert.textContent = "Warning: This will overwrite an existing world";
 					worldnameAlert.style.color = "#FF7D00";
 					createButton.disabled = false;
@@ -174,13 +171,9 @@
 				worldnameAlert.textContent = "";
 				createButton.disabled = false;
 			}
-
-			worldProperties.worldname = worldname;
 		});
 
 		// Mods
-		worldProperties.mods = {};
-
 		createWorldGUI.create("h2").innerHTML = "&ensp;Mods";
 
 		let modlistDisplay;
@@ -217,8 +210,6 @@
 		};
 
 		// Gamemode
-		worldProperties.gamemode = "survival";
-
 		createWorldGUI.create("h2").innerHTML = "&ensp;Gamemode";
 
 		for (let gamemode of ["survival", "creative"]){
@@ -246,6 +237,7 @@
 		let selectMapgen = createWorldGUI.create("select");
 		selectMapgen.style.position = "relative";
 		selectMapgen.style.left = "40px";
+		selectMapgen.value = worldProperties.mapgen;
 
 		selectMapgen.addEventListener("input", _ => {
 			worldProperties.mapgen = selectMapgen.value;
@@ -253,8 +245,6 @@
 
 		for (let mapgen in dragonblocks.mapgen.list)
 			selectMapgen.appendChild(document.createElement("option")).innerHTML = mapgen;
-
-		worldProperties.mapgen = selectMapgen.value;
 
 		createWorldGUI.create("br");
 		createWorldGUI.create("br");
@@ -272,15 +262,7 @@
 			event.srcElement.blur();
 			createWorldGUI.close();
 
-			dragonblocks.worldIsLoaded = false;
-			dragonblocks.worldname = worldProperties.worldname;
-			dragonblocks.world = dragonblocks.getEmptyWorld();
-
-			dragonblocks.entities["dragonblocks:player"].meta.creative = (worldProperties.gamemode == "creative");
-
-			dragonblocks.mapgen.selected = worldProperties.mapgen;
-
-			dragonblocks.start(worldProperties.mods);
+			dragonblocks.start(worldProperties);
 		});
 
 		createWorldGUI.create("br");
@@ -370,7 +352,7 @@
 			text: "Quit",
 			action: _ => {
 				if (dragonblocks.isChromeApp)
-					window.close();
+					close();
 				else
 					history.back();
 			},
@@ -399,7 +381,7 @@
 
 	dragonblocks.enterMainMenu = _ => {
 		dragonblocks.loadModList();
-		dragonblocks.loadWorldList();
+		worlds = dragonblocks.backendCall("getWorlds");
 
 		content.style.display = "inherit";
 		status.style.display = "none";
@@ -434,6 +416,8 @@
 		document.getElementById("elidragon").remove();
 		content.style.width = logo.offsetWidth + "px";
 		mainmenu.style.visibility = "visible";
+
+		let splashes = $.getJSON("splashes.json").responseJSON;
 
 		splash.innerHTML = splashes[Math.floor(Math.random() * splashes.length)];
 		let fontSize = Math.min(parseInt(10000 / splash.clientWidth), 30);

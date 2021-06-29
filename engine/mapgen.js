@@ -23,12 +23,6 @@
 
 dragonblocks.mapgen = {};
 
-dragonblocks.mapgen.addStructure = (name, msg, pos) => {
-	let strs = dragonblocks.world.structures;
-	strs[name] = strs[name] || [];
-	strs[name].push({msg: msg, pos: pos});
-};
-
 dragonblocks.mapgen.biomes = [];
 dragonblocks.registerBiome = obj => {
 	dragonblocks.mapgen.biomes.push(obj);
@@ -44,27 +38,19 @@ dragonblocks.registerOre = obj => {
 	dragonblocks.mapgen.ores.push(obj);
 };
 
-dragonblocks.mapgen.selected = "empty";
 dragonblocks.mapgen.list = {};
 
-dragonblocks.generateMap = _ => {
-	dragonblocks.mapgen.list[dragonblocks.mapgen.selected]();
+dragonblocks.mapgen.generate = (mapgenName, map) => {
+	dragonblocks.mapgen.list[mapgenName](map);
 };
 
-dragonblocks.mapgen.list["v3"] = _ => {
+dragonblocks.mapgen.list["v3"] = map => {
 	// Localize variables
-
 	let int = parseInt;
-
-	let snode = dragonblocks.setNode;
-	let gnode = dragonblocks.getNode;
-
 	let schem = dragonblocks.Schematic;
-
 	let rand = dblib.random;
-
-	let height = dragonblocks.map.height;
-	let width = dragonblocks.map.width;
+	let height = map.height;
+	let width = map.width;
 
 	// Biomes
 
@@ -89,7 +75,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 
 					let border = Math.min(d + rand(biomeList[i].size[0], biomeList[i].size[1]), width);
 
-					dragonblocks.mapgen.addStructure(biomeList[i].name, "(" + d + " - " + border + ", *)", {x: int((d + border)/2), y: 5});
+					map.addStructure(biomeList[i].name, "(" + d + " - " + border + ", *)", {x: int((d + border)/2), y: 5});
 
 					for(; d < border; d++)
 						biomes.push(i);
@@ -196,7 +182,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 					let gx = int((start + end) / 2);
 					let gy = ground[gx] - 3;
 
-					dragonblocks.mapgen.addStructure(level.name, "(" + start + " - " + end + ", *)", {x: gx, y: gy});
+					map.addStructure(level.name, "(" + start + " - " + end + ", *)", {x: gx, y: gy});
 
 					structAdded = true;
 				}
@@ -236,7 +222,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 			if (! ground[x] || y < ground[x] || (y / height  * 100 - 50) < ore.deep)
 				return false;
 
-			snode(x, y, ore.name);
+			map.setNode(x, y, ore.name);
 
 			return true;
 		};
@@ -249,18 +235,18 @@ dragonblocks.mapgen.list["v3"] = _ => {
 			let biome = biomeList[biomes[x]];
 
 			for (; y < g + 1; y++)
-				snode(x, y, biome.surface);
+				map.setNode(x, y, biome.surface);
 
 			for (; y < g + 5; y++)
-				snode(x, y, biome.ground);
+				map.setNode(x, y, biome.ground);
 
 			for (; y < height; y++) {
-				snode(x, y, biome.underground);
+				map.setNode(x, y, biome.underground);
 
 				for (let ore of dragonblocks.mapgen.ores) {
 					if (dblib.random(0, ore.factor) == 0) {
 						if (setOre(x, y, ore))
-							dragonblocks.mapgen.addStructure(ore.name, "(" + x + ", " + y + ")", {x: x, y: y});
+							map.addStructure(ore.name, "(" + x + ", " + y + ")", {x, y});
 
 						for (let i = 0; i < ore.clustersize; i++)
 							setOre(x + dblib.random(-2, 2), y + dblib.random(-2, 2), ore);
@@ -285,25 +271,25 @@ dragonblocks.mapgen.list["v3"] = _ => {
 				start = start || x;
 				water[x] = true;
 
-				snode(x, top, biome.watertop);
+				map.setNode(x, top, biome.watertop);
 
 				let y = top + 1;
 
 				for(; y < ground[x]; y++)
-					snode(x, y, biome.water);
+					map.setNode(x, y, biome.water);
 
 				for(; y < ground[x] + 5; y++)
-					snode(x, y, biome.floor);
+					map.setNode(x, y, biome.floor);
 			} else if (start) {
 				let end = x - 1;
-				dragonblocks.mapgen.addStructure("water", "(" + start + " - " + end + ", " + top + ")", {x: int((start + end) / 2), y: top});
+				map.addStructure("water", "(" + start + " - " + end + ", " + top + ")", {x: int((start + end) / 2), y: top});
 				start = 0;
 			}
 		}
 
 		if (start) {
 			let end = width;
-			dragonblocks.mapgen.addStructure("water", "(" + start + " - " + end + ", " + top + ")", {x: int((start + end) / 2), y: top});
+			map.addStructure("water", "(" + start + " - " + end + ", " + top + ")", {x: int((start + end) / 2), y: top});
 		}
 	}
 
@@ -319,8 +305,8 @@ dragonblocks.mapgen.list["v3"] = _ => {
 
 				for (let tree of biome.trees) {
 					if (Math.random() <= tree.chance) {
-						snode(x, g - 1, tree.sapling);
-						gnode(x, g - 1) && dragonblocks.finishTimer("growTimer", gnode(x, g - 1).meta);
+						map.setNode(x, g - 1, tree.sapling);
+						map.getNode(x, g - 1) && dragonblocks.finishTimer("growTimer", map.getNode(x, g - 1).meta);
 						nextTree = x + tree.width;
 						break;
 					}
@@ -332,14 +318,14 @@ dragonblocks.mapgen.list["v3"] = _ => {
 	// Ressource Blobs (e.g. Gravel, Dirt)
 
 	{
-		let belowGround = (node, x, y) => {
-			return y > ground[x]
+		let belowGround = (node, map, x, y) => {
+			return y > ground[x];
 		};
 
-		function structure(x, y, mat) {
+		let structure = (x, y, mat) => {
 			new schem([["§" + mat, mat], [mat, mat]])
 				.addFunction(belowGround)
-				.apply(x, y);
+				.apply(map, x, y);
 
 			let sides = [
 				new schem([[mat, mat], ["§", ""]]),
@@ -373,20 +359,20 @@ dragonblocks.mapgen.list["v3"] = _ => {
 
 			for (let i in sides) {
 				if (Math.random() * 1.2 < 1){
-					sides[i].apply(x, y);
+					sides[i].apply(map, x, y);
 
 					for (let j = i; j <= int(i) + 1; j++){
 						let corner = corners[j] || corners[0];
 
 						if (Math.random() * 1.5 < 1)
-							corner.apply(x, y);
+							corner.apply(map, x, y);
 					}
 
 					if (Math.random() * 2 < 1)
-						moresides[i].apply(x, y);
+						moresides[i].apply(map, x, y);
 				}
 			}
-		}
+		};
 
 		for (let material of dragonblocks.mapgen.materials)
 			for (let i = 0; i < width / material.factor; i++)
@@ -396,7 +382,7 @@ dragonblocks.mapgen.list["v3"] = _ => {
 	// Caves
 
 	{
-		let cave = (x, y, r) => {
+		let cave = (map, x, y, r) => {
 			r *= 2;
 
 			let caveschem = new schem([
@@ -407,52 +393,51 @@ dragonblocks.mapgen.list["v3"] = _ => {
 				["",    "air",  "air", "air",    ""],
 			]);
 
-			caveschem.addFunction((node, x, y) => {
+			caveschem.addFunction((node, map, x, y) => {
 				if (y < ground[x])
 					return false;
 
 				if (dblib.random(0, r) == 0)
-					cave(x, y, r);
+					cave(map, x, y, r);
 			});
 
-			caveschem.apply(x, y);
+			caveschem.apply(map, x, y);
 		};
 
-		let newCave = (x, y) => {
+		let newCave = (map, x, y) => {
 			let r = dblib.random(0, 10) + 1;
 
 			if (y < ground[x] + 10)
 				return false;
 
-			cave(x, y, r);
+			cave(map, x, y, r);
 
-			dragonblocks.mapgen.addStructure("cave", "(" + x + ", " + y + ")", {x: x, y: y});
+			map.addStructure("cave", "(" + x + ", " + y + ")", {x, y});
 		};
 
 		let r = dblib.random(width / 5, width / 15);
 
 		for (let i = 0; i < r; i++)
-			newCave(rand(0, width), rand(0, height));
+			newCave(map, rand(0, width), rand(0, height));
 	}
 };
 
-dragonblocks.mapgen.list["flat"] = _ => {
-	for (let x = 0; x < dragonblocks.map.width; x++) {
+dragonblocks.mapgen.list["flat"] = map => {
+	for (let x = 0; x < map.width; x++) {
 		let y = 0;
 
-		for(; y < dragonblocks.map.height - 5; y++)
-			dragonblocks.setNode(x, y, "air");
+		for(; y < map.height - 5; y++)
+			map.setNode(x, y, "air");
 
-		for(; y < dragonblocks.map.height - 4; y++)
-			dragonblocks.setNode(x, y, "dirt:grass");
+		for(; y < map.height - 4; y++)
+			map.setNode(x, y, "dirt:grass");
 
-		for(; y < dragonblocks.map.height - 3; y++)
-			dragonblocks.setNode(x, y, "dirt:dirt");
+		for(; y < map.height - 3; y++)
+			map.setNode(x, y, "dirt:dirt");
 
-		for(; y < dragonblocks.map.height; y++)
-			dragonblocks.setNode(x, y, "core:stone");
+		for(; y < map.height; y++)
+			map.setNode(x, y, "core:stone");
 	}
 };
 
-dragonblocks.mapgen.list["empty"] = _ => {};
-
+dragonblocks.mapgen.list["void"] = _ => {};

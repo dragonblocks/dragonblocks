@@ -6,18 +6,20 @@ tnt.explosion = new dragonblocks.Schematic([
 	["air", "air", "air", "air", "air"],
 	["", "air", "air", "air", ""],
 ]);
-tnt.explosion.addFunction((node, x, y) => {
-	if(node.onblast && node.onblast(x, y) == false)
+tnt.explosion.addFunction((node, map, x, y) => {
+	if(node.onblast && node.onblast(map, x, y) == false)
 		return false;
 	return dblib.random(0, 100) < 90;
 });
-tnt.ignite = function(x, y, time){
-	dragonblocks.setTimer("tntTimer", time, _ => {tnt.explode(x, y)}, dragonblocks.getNode(x, y).meta);
+tnt.ignite = function(map, x, y, time){
+	dragonblocks.setTimer("tntTimer", time, _ => {
+		tnt.explode(map, x, y);
+	}, map.getNode(x, y).meta);
 }
-tnt.explode = function(x, y){
-	dragonblocks.setNode(x, y, "air");
+tnt.explode = function(map, x, y){
+	map.setNode(x, y, "air");
 	dragonblocks.playSound("tnt_explode.ogg");
-	tnt.explosion.apply(x, y);
+	tnt.explosion.apply(map, x, y);
 }
 dragonblocks.registerNode({
 	name: "tnt:tnt",
@@ -28,16 +30,15 @@ dragonblocks.registerNode({
 	texture: "tnt_tnt.png",
 	onfire: (x, y) => {
 		dragonblocks.playSound("tnt_ignite.ogg");
-		dragonblocks.setNode(x, y, "tnt:active_tnt");
+		map.setNode(x, y, "tnt:active_tnt");
 	},
-	onblast: (x, y) => {
-		dragonblocks.playSound("tnt_ignite.ogg");
-		tnt.ignite(x, y, 0.1);
+	onblast: (map, x, y) => {
+		tnt.ignite(map, x, y, 0.1);
 	},
-	onclick: (x, y) => {
+	onclick: (map, x, y) => {
 		if(dragonblocks.player.getWieldedItem().item == "torch:torch"){
 			dragonblocks.playSound("tnt_ignite.ogg");
-			dragonblocks.setNode(x, y, "tnt:active_tnt");
+			map.setNode(x, y, "tnt:active_tnt");
 		}
 	},
 	flammable: true
@@ -49,8 +50,8 @@ dragonblocks.registerNode({
 	stable: true,
 	desc: "TNT (active)",
 	texture: "tnt_active_tnt.png",
-	onset: (x, y) => {
-		tnt.ignite(x, y, 4);
+	onset: (map, x, y) => {
+		tnt.ignite(map, x, y, 4);
 	},
 	ondig: _ => {
 		return false;
@@ -68,9 +69,9 @@ dragonblocks.registerNode({
 	mobstable: false,
 	desc: "Gunpowder",
 	texture: "tnt_gunpowder.png",
-	onclick: (x, y) => {
+	onclick: (map, x, y) => {
 		if(dragonblocks.player.getWieldedItem().item == "torch:torch_floor")
-			dragonblocks.setNode(x, y, "tnt:active_gunpowder");
+			map.setNode(x, y, "tnt:active_gunpowder");
 	},
 	hidden: true,
 });
@@ -83,25 +84,25 @@ dragonblocks.registerNode({
 	desc: "Gunpowder (active)",
 	texture: "tnt_active_gunpowder.png",
 	drops: "tnt:gunpowder",
-	onset: (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onset: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		meta.gunpowderTime = 1;
 		meta.gunpowderInterval = setInterval(_ => {
 			meta.gunpowderTime -= 0.1;
 			if(meta.gunpowderTime <= 0){
-				dragonblocks.setNode(x, y, "air");
+				map.setNode(x, y, "air");
 				for(let [ix, iy] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]){
-					if(dragonblocks.getNode(ix, iy).name == "tnt:gunpowder")
-						dragonblocks.setNode(ix, iy, "tnt:active_gunpowder");
-					else if(dragonblocks.getNode(ix, iy).name == "tnt:tnt")
-						tnt.ignite(ix, iy, tnt.time);
+					if(map.getNode(ix, iy).name == "tnt:gunpowder")
+						map.setNode(ix, iy, "tnt:active_gunpowder");
+					else if(map.getNode(ix, iy).name == "tnt:tnt")
+						tnt.ignite(map, ix, iy, tnt.time);
 				}
 				clearInterval(meta.gunpowderInterval);
 			}
 		}, 100);
 	},
-	onremove: (x, y) => {
-		clearInterval(dragonblocks.getNode(x, y).meta.gunpowderInterval);
+	onremove: (map, x, y) => {
+		clearInterval(map.getNode(x, y).meta.gunpowderInterval);
 	},
 	hidden: true
 });

@@ -13,11 +13,11 @@ doors.registerDoor = function(obj){
 		groups: obj.groups,
 		desc: obj.desc,
 		texture: texture + ".png",
-		onuse: (x, y) => {
-			if(! dragonblocks.getNode(x, y) || dragonblocks.getNode(x, y).stable || ! dragonblocks.getNode(x, y - 1) || dragonblocks.getNode(x, y - 1).stable)
+		onuse: (map, x, y) => {
+			if(! map.getNode(x, y) || map.getNode(x, y).stable || ! map.getNode(x, y - 1) || map.getNode(x, y - 1).stable)
 				return false;
-			dragonblocks.setNode(x, y - 1, name + "_front_upper");
-			dragonblocks.setNode(x, y, name + "_front_downer");
+			map.setNode(x, y - 1, name + "_front_upper");
+			map.setNode(x, y, name + "_front_downer");
 			dragonblocks.items[name].playSound("place");
 			return true;
 		},
@@ -31,14 +31,14 @@ doors.registerDoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + "_front_upper.png",
-		ondig: (x, y) => {
-			if(dragonblocks.getNode(x, y + 1) && dragonblocks.getNode(x, y + 1).name == name + "_front_downer")
-				dragonblocks.setNode(x, y + 1, "air");
+		ondig: (map, x, y) => {
+			if(map.getNode(x, y + 1) && map.getNode(x, y + 1).name == name + "_front_downer")
+				map.setNode(x, y + 1, "air");
 		},
-		onclick: (x, y) => {
-			if(dragonblocks.getNode(x, y + 1) && dragonblocks.getNode(x, y + 1).name == name + "_front_downer")
-				dragonblocks.setNode(x, y + 1, name + "_side_downer");
-			dragonblocks.setNode(x, y, name + "_side_upper");
+		onclick: (map, x, y) => {
+			if(map.getNode(x, y + 1) && map.getNode(x, y + 1).name == name + "_front_downer")
+				map.setNode(x, y + 1, name + "_side_downer");
+			map.setNode(x, y, name + "_side_upper");
 			dragonblocks.playSound(sound + "_close.ogg");
 		},
 		drops: name,
@@ -52,14 +52,14 @@ doors.registerDoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + "_front_downer.png",
-		ondig: (x, y) => {
-			if(dragonblocks.getNode(x, y - 1) && dragonblocks.getNode(x, y - 1).name == name + "_front_upper")
-				dragonblocks.setNode(x, y - 1, "air");
+		ondig: (map, x, y) => {
+			if(map.getNode(x, y - 1) && map.getNode(x, y - 1).name == name + "_front_upper")
+				map.setNode(x, y - 1, "air");
 		},
-		onclick: (x, y) => {
-			if(dragonblocks.getNode(x, y - 1) && dragonblocks.getNode(x, y - 1).name == name + "_front_upper")
-				dragonblocks.setNode(x, y - 1, name + "_side_upper");
-			dragonblocks.setNode(x, y, name + "_side_downer");
+		onclick: (map, x, y) => {
+			if(map.getNode(x, y - 1) && map.getNode(x, y - 1).name == name + "_front_upper")
+				map.setNode(x, y - 1, name + "_side_upper");
+			map.setNode(x, y, name + "_side_downer");
 			dragonblocks.playSound(sound + "_close.ogg");
 		},
 		drops: name,
@@ -72,14 +72,14 @@ doors.registerDoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + "_side.png",
-		ondig: (x, y) => {
-			if(dragonblocks.getNode(x, y + 1) && dragonblocks.getNode(x, y + 1).name == name + "_side_downer")
-				dragonblocks.setNode(x, y + 1, "air");
+		ondig: (map, x, y) => {
+			if(map.getNode(x, y + 1) && map.getNode(x, y + 1).name == name + "_side_downer")
+				map.setNode(x, y + 1, "air");
 		},
-		onclick: (x, y) => {
-			if(dragonblocks.getNode(x, y + 1) && dragonblocks.getNode(x, y + 1).name == name + "_side_downer")
-				dragonblocks.setNode(x, y + 1, name + "_front_downer");
-			dragonblocks.setNode(x, y, name + "_front_upper");
+		onclick: (map, x, y) => {
+			if(map.getNode(x, y + 1) && map.getNode(x, y + 1).name == name + "_side_downer")
+				map.setNode(x, y + 1, name + "_front_downer");
+			map.setNode(x, y, name + "_front_upper");
 			dragonblocks.playSound(sound + "_open.ogg");
 		},
 		drops: name,
@@ -92,14 +92,14 @@ doors.registerDoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + "_side.png",
-		ondig: (x, y) => {
-			if(dragonblocks.getNode(x, y - 1) && dragonblocks.getNode(x, y - 1).name == name + "_side_upper")
-				dragonblocks.setNode(x, y - 1, "air");
+		ondig: (map, x, y) => {
+			if(map.getNode(x, y - 1) && map.getNode(x, y - 1).name == name + "_side_upper")
+				map.setNode(x, y - 1, "air");
 		},
-		onclick: (x, y) => {
-			if(dragonblocks.getNode(x, y - 1) && dragonblocks.getNode(x, y - 1).name == name + "_side_upper")
-				dragonblocks.setNode(x, y - 1, name + "_front_upper");
-			dragonblocks.setNode(x, y, name + "_front_downer");
+		onclick: (map, x, y) => {
+			if(map.getNode(x, y - 1) && map.getNode(x, y - 1).name == name + "_side_upper")
+				map.setNode(x, y - 1, name + "_front_upper");
+			map.setNode(x, y, name + "_front_downer");
 			dragonblocks.playSound(sound + "_open.ogg");
 		},
 		drops: name,
@@ -133,8 +133,8 @@ doors.registerTrapdoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + ".png",
-		onclick: (x, y) => {
-			dragonblocks.setNode(x, y, name + "_closed");
+		onclick: (map, x, y) => {
+			map.setNode(x, y, name + "_closed");
 			dragonblocks.playSound(sound + "_close.ogg");
 		},
 		stacksize: obj.stacksize,
@@ -146,8 +146,8 @@ doors.registerTrapdoor = function(obj){
 		hardness: obj.hardness,
 		desc: obj.desc,
 		texture: texture + "_closed.png",
-		onclick: (x, y) => {
-			dragonblocks.setNode(x, y, name);
+		onclick: (map, x, y) => {
+			map.setNode(x, y, name);
 			dragonblocks.playSound(sound + "_open.ogg");
 		},
 		drops: name,

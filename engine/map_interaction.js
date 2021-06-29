@@ -38,42 +38,39 @@ dragonblocks.MapInteraction = {
 
 		crack.addEventListener("mouseleave", event => {
 			self.digStop();
-			let [x, y] = dragonblocks.map.getScreenCoordinates(event.srcElement.offsetLeft, event.srcElement.offsetTop);
-			dragonblocks.map.getNodeDisplay(x, y).style.boxShadow = "none";
+			let [x, y] = self.map.getScreenCoordinates(event.srcElement.offsetLeft, event.srcElement.offsetTop);
+			self.map.getNodeDisplay(x, y).style.boxShadow = "none";
 		});
 
 		crack.addEventListener("mouseover", event => {
-			let [x, y] = dragonblocks.map.getScreenCoordinates(event.srcElement.offsetLeft + document.getElementById("dragonblocks.map").offsetLeft, event.srcElement.offsetTop + document.getElementById("dragonblocks.map").offsetTop);
-			dragonblocks.map.getNodeDisplay(x, y).style.boxShadow = "0 0 0 1px black inset";
+			let [x, y] = self.map.getScreenCoordinates(event.srcElement.offsetLeft + document.getElementById("dragonblocks.map").offsetLeft, event.srcElement.offsetTop + document.getElementById("dragonblocks.map").offsetTop);
+			self.map.getNodeDisplay(x, y).style.boxShadow = "0 0 0 1px black inset";
 		});
 	},
 
-	dig(x, y)
+	dig(map, x, y)
 	{
-		let node = dragonblocks.getNode(x, y);
+		console.log(this);
+		let node = map.getNode(x, y);
 
 		if (! node)
 			return false;
 
 		let nodeDef = node.toNode();
-		if (nodeDef.ondig && nodeDef.ondig(x, y) == false)
+		if (nodeDef.ondig && nodeDef.ondig(map, x, y) == false)
 			return false;
-
-		for (let func of dragonblocks.onDigNodeCallbacks)
-			if (func(x, y) == false)
-				return false;
 
 		nodeDef.playSound("dug");
 
-		dragonblocks.setNode(x, y, "air");
-		dragonblocks.map.activate(x, y);
+		map.setNode(x, y, "air");
+		map.activate(map, x, y);
 
 		return true;
 	},
 
 	digStart(x, y)
 	{
-		let node = dragonblocks.getNode(x, y);
+		let node = this.map.getNode(x, y);
 		let nodeDef = node.toNode();
 
 		node.meta.hardness = nodeDef.hardness;
@@ -84,17 +81,14 @@ dragonblocks.MapInteraction = {
 
 		let crack = document.getElementById("dragonblocks.crack[" + this.id + "]")
 		crack.style.visibility = "visible";
-		crack.style.left = (x - dragonblocks.map.displayLeft) * dragonblocks.settings.map.scale + "px";
-		crack.style.top = (y - dragonblocks.map.displayTop) * dragonblocks.settings.map.scale + "px";
+		crack.style.left = (x - this.map.displayLeft) * dragonblocks.settings.map.scale + "px";
+		crack.style.top = (y - this.map.displayTop) * dragonblocks.settings.map.scale + "px";
 
 		dragonblocks.log("Punched Node at (" + x + ", " + y + ")");
 
-		nodeDef.onpunch && nodeDef.onpunch(x,y);
+		nodeDef.onpunch && nodeDef.onpunch(this.map, x,y);
 
-		for (let func of dragonblocks.onPunchNodeCallbacks)
-			func(x, y);
-
-		dragonblocks.map.activate(x, y);
+		this.map.activate(x, y);
 
 		this.digTick(x, y);
 	},
@@ -103,7 +97,7 @@ dragonblocks.MapInteraction = {
 	{
 		let self = this;
 
-		let node = dragonblocks.getNode(x, y);
+		let node = this.map.getNode(x, y);
 		if (! node)
 			return;
 
@@ -134,15 +128,15 @@ dragonblocks.MapInteraction = {
 
 	digEnd(x, y)
 	{
-		let node = dragonblocks.getNode(x, y);
+		let node = this.map.getNode(x, y);
 
 		if (! node)
 			return;
 
 		let nodeDef = node.toNode();
 
-		if (this.dig(x, y))
-			dragonblocks.handleNodeDrop(this.tmp.mainInventory, nodeDef, x, y);
+		if (this.dig(this.map, x, y))
+			dragonblocks.handleNodeDrop(this.tmp.mainInventory, nodeDef, this.map, x, y);
 
 		document.getElementById("dragonblocks.crack[" + this.id + "]").style.visibility = "hidden";
 	},
@@ -153,22 +147,18 @@ dragonblocks.MapInteraction = {
 		document.getElementById("dragonblocks.crack[" + this.id + "]").style.visibility = "hidden";
 	},
 
-	place(x, y, node)
+	place(map, x, y, node)
 	{
-		let oldNode = dragonblocks.getNode(x, y);
+		let oldNode = this.map.getNode(x, y);
 
 		if (! oldNode || oldNode.stable)
 			return false;
 
-		if (node.onplace && node.onplace(x, y) == false)
+		if (node.onplace && node.onplace(map, x, y) == false)
 			return false;
 
-		for (let func of dragonblocks.onPlaceNodeCallbacks)
-			if (func(node, x, y) == false)
-				return false;
-
-		dragonblocks.setNode(x, y, node);
-		dragonblocks.map.activate(x, y);
+		map.setNode(x, y, node);
+		map.activate(x, y);
 
 		node.playSound("place");
 
@@ -178,13 +168,10 @@ dragonblocks.MapInteraction = {
 	build(x, y)
 	{
 		if(this.canReach(x, y)) {
-			let oldNodeDef = dragonblocks.getNode(x, y).toNode();
-			oldNodeDef.onclick && oldNodeDef.onclick(x, y);
+			let oldNodeDef = this.map.getNode(x, y).toNode();
+			oldNodeDef.onclick && oldNodeDef.onclick(this.map, x, y);
 
-			for (let func of dragonblocks.onClickNodeCallbacks)
-				func(x, y);
-
-			if (this.touch(x, y))
+			if (this.touch(this.map, x, y))
 				return;
 
 			let wielded = this.getWieldedItem();
@@ -196,18 +183,13 @@ dragonblocks.MapInteraction = {
 			let itemDef = itemstack.toItem();
 
 			if (itemDef instanceof dragonblocks.Node) {
-				if (! this.place(x, y, itemDef) || this.meta.creative)
+				if (! this.place(this.map, x, y, itemDef) || this.meta.creative)
 					wielded.add(itemstack);
 			} else {
-				if (! itemDef.onuse || ! itemDef.onuse(x, y)) {
+				if (! itemDef.onuse || ! itemDef.onuse(this.map, x, y))
 					wielded.add(itemstack);
-				} else {
-					for (let func of dragonblocks.onUseItemCallbacks)
-						func(itemDef, x, y);
-
-					if (this.meta.creative)
-						wielded.add(itemstack);
-				}
+				else if (this.meta.creative)
+					wielded.add(itemstack);
 			}
 		}
 	},
@@ -218,6 +200,6 @@ dragonblocks.MapInteraction = {
 	}
 };
 
-dragonblocks.handleNodeDrop = (inventory, nodeDef, x, y) => {
-	dragonblocks.dropItem(inventory.add((nodeDef.drops instanceof Function) ? nodeDef.drops() : nodeDef.drops), x + 0.2, y + 0.2);
+dragonblocks.handleNodeDrop = (inventory, nodeDef, map, x, y) => {
+	dragonblocks.dropItem(inventory.add((nodeDef.drops instanceof Function) ? nodeDef.drops() : nodeDef.drops), map, x + 0.2, y + 0.2);
 };

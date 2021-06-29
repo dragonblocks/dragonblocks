@@ -23,8 +23,10 @@
 
 dragonblocks.SpawnedEntity = class
 {
-	constructor(def, x, y){
+	constructor(def, map, x, y)
+	{
 		dblib.copy(this, def);
+		this.tmp = {map};
 
 		if (def instanceof dragonblocks.Entity) {
 			this.id = dragonblocks.getToken();
@@ -40,17 +42,16 @@ dragonblocks.SpawnedEntity = class
 		}
 
 		this.restorePhysics();
-		this.tmp = {};
-
 		this.addGraphics();
 
 		let self = this;
 
 		this.tickInterval = setInterval(_ => {
-			self.tick()
+			self.tick();
 		}, 100);
+
 		this.physicInterval = setInterval(_=>{
-			self.physicsTick()
+			self.physicsTick();
 		});
 
 		let entityDef = this.toEntity();
@@ -64,7 +65,7 @@ dragonblocks.SpawnedEntity = class
 			self.restorePhysics();
 		});
 
-		dragonblocks.spawnedEntities.push(this);
+		map.entities.push(this);
 	}
 
 	toEntity()
@@ -78,14 +79,15 @@ dragonblocks.SpawnedEntity = class
 		entityDef.ondespawn && entityDef.ondespawn(this);
 
 		let id = this.id;
-		dragonblocks.spawnedEntities = dragonblocks.spawnedEntities.filter(entity => {
+		this.map.entities = this.map.entities.filter(entity => {
 			return entity.id != id;
 		});
 
 		clearInterval(this.physicInterval);
 		clearInterval(this.tickInterval);
 
-		document.getElementById("dragonblocks.entity[" + this.id + "]").remove();
+		let display = document.getElementById("dragonblocks.entity[" + this.id + "]");
+		display && display.remove();
 	}
 
 	restorePhysics()
@@ -101,7 +103,7 @@ dragonblocks.SpawnedEntity = class
 		if (this.x < 0)
 			return false;
 
-		if (this.x + this.width > dragonblocks.map.width)
+		if (this.x + this.width > this.map.width)
 			return false;
 
 		return this.collision();
@@ -112,7 +114,7 @@ dragonblocks.SpawnedEntity = class
 		if (this.y < 0)
 			return false;
 
-		if (this.y + this.height > dragonblocks.map.height)
+		if (this.y + this.height > this.map.height)
 			return false;
 
 		return this.collision();
@@ -122,7 +124,7 @@ dragonblocks.SpawnedEntity = class
 	{
 		for (let ix = Math.floor(this.x); ix <= Math.ceil(this.x + this.width - 0.01) - 1; ix++)
 			for (let iy = Math.floor(this.y); iy <= Math.ceil(this.y + this.height - 0.01) - 1; iy++)
-				if (dragonblocks.getNode(ix, iy).mobstable)
+				if (this.map.getNode(ix, iy).mobstable)
 					return false;
 		return true;
 	}
@@ -147,8 +149,8 @@ dragonblocks.SpawnedEntity = class
 	{
 		let t = new Date().getTime() / 1000;
 
-		var oldX = this.x;
-		var dtx = t - this.tx0;
+		let oldX = this.x;
+		let dtx = t - this.tx0;
 
 		if (this.ax)
 			this.x = this.ax * dtx * dtx + this.vx * dtx + this.x0;
@@ -161,8 +163,8 @@ dragonblocks.SpawnedEntity = class
 			this.toEntity().oncollide && this.toEntity().oncollide(this);
 		}
 
-		var oldY = this.y;
-		var dty = t - this.ty0;
+		let oldY = this.y;
+		let dty = t - this.ty0;
 
 		if (this.ay)
 			this.y = this.ay * dty * dty + this.vy * dty + this.y0;
@@ -180,8 +182,10 @@ dragonblocks.SpawnedEntity = class
 		this.updateGraphics();
 	}
 
-	touch(x, y)
+	touch(map, x, y)
 	{
+		if (map != this.map)
+			return false;
 		for (let ix = Math.floor(this.x); ix <= Math.ceil(this.x + this.width - 0.01) - 1; ix++)
 			for (let iy = Math.floor(this.y); iy <= Math.ceil(this.y + this.height - 0.01) - 1; iy++)
 				if (iy == y && ix == x)
@@ -190,13 +194,12 @@ dragonblocks.SpawnedEntity = class
 
 	addGraphics(obj)
 	{
-		var display = document.getElementById("dragonblocks.map").appendChild(document.createElement("div"));
+		let display = document.getElementById("dragonblocks.map").appendChild(document.createElement("div"));
 		display.id = "dragonblocks.entity[" + this.id + "]";
 		display.style.position = "absolute";
 		display.style.width = this.width * dragonblocks.settings.map.scale + "px";
 		display.style.height = this.height * dragonblocks.settings.map.scale + "px";
 		display.style.zIndex = "0";
-
 
 		display.addEventListener("mouseover", event => {
 			event.srcElement.style.boxShadow = "0 0 0 1px black inset";
@@ -233,8 +236,8 @@ dragonblocks.SpawnedEntity = class
 		if (! display)
 			return;
 
-		display.style.left = (this.x - dragonblocks.map.displayLeft) * dragonblocks.settings.map.scale + "px";
-		display.style.top = (this.y - dragonblocks.map.displayTop) * dragonblocks.settings.map.scale + "px";
+		display.style.left = (this.x - this.map.displayLeft) * dragonblocks.settings.map.scale + "px";
+		display.style.top = (this.y - this.map.displayTop) * dragonblocks.settings.map.scale + "px";
 	}
 
 	updateTexture()
@@ -325,7 +328,7 @@ dragonblocks.SpawnedEntity = class
 			let y = Math.ceil(entityY);
 
 			if (y - entityY <= 0.01) {
-				let node = dragonblocks.getNode(x, y);
+				let node = this.map.getNode(x, y);
 
 				if (! node || node.mobstable)
 					return true;
@@ -384,11 +387,9 @@ dragonblocks.SpawnedEntity = class
 		if (this.gravity)
 			this.gravity = true;
 	}
-};
 
-dragonblocks.spawnedEntities = [];
-dragonblocks.registerOnStarted(_ => {
-	if (dragonblocks.worldIsLoaded)
-		for (let entity of dragonblocks.world.spawnedEntities)
-			new dragonblocks.SpawnedEntity(entity);
-});
+	get map()
+	{
+		return this.tmp.map;
+	}
+};

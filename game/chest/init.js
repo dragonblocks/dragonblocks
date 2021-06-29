@@ -5,14 +5,14 @@ dragonblocks.registerNode({
 	hardness: 6,
 	desc: "Chest",
 	stable: true,
-	onset: (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onset: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		meta.inventory = new dragonblocks.Inventory(32, 8);
 		if(meta.inventoryString)
 			meta.inventory.deserialize(meta.inventoryString);
 	},
-	onclick: (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onclick: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		dragonblocks.player.setInventoryElements([meta.inventory, dragonblocks.player.tmp.mainInventory]);
 		dragonblocks.player.openInventory();
 		dragonblocks.nodes["chest:chest"].playSound("open");
@@ -22,8 +22,8 @@ dragonblocks.registerNode({
 			meta.inventoryString = meta.inventory.serialize();
 		};
 	},
-	ondig: (x, y) => {
-		return dragonblocks.getNode(x, y).meta.inventory.isEmpty();
+	ondig: (map, x, y) => {
+		return map.getNode(x, y).meta.inventory.isEmpty();
 	},
 	sounds: {
 		open: "chest_open.ogg",

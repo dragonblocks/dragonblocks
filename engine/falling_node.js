@@ -28,33 +28,33 @@ dragonblocks.registerEntity({
 	height: 1,
 	texture: this.texture,
 	oncollide: self => {
-		let under = dragonblocks.getNode(Math.floor(self.x), Math.floor(self.y) + 1);
+		let under = self.map.getNode(Math.floor(self.x), Math.floor(self.y) + 1);
 
 		if (! under || under.mobstable) {
-			dragonblocks.setNode(Math.floor(self.x), Math.floor(self.y), self.meta.nodeName);
+			self.map.setNode(Math.floor(self.x), Math.floor(self.y), self.meta.nodeName);
 			self.despawn();
 		}
 	}
 });
 
-dragonblocks.registerOnActivateNode((x, y) => {
-	let node = dragonblocks.getNode(x, y);
+dragonblocks.registerOnActivate((map, x, y) => {
+	let node = map.getNode(x, y);
 	if (! node.toNode().physics)
 		return;
 
-	let under = dragonblocks.getNode(x, y + 1);
+	let under = map.getNode(x, y + 1);
 	if (under && ! under.mobstable)
-		dragonblocks.spawnFallingNode(node.name, x, y)
+		dragonblocks.spawnFallingNode(node.name, map, x, y)
 });
 
-dragonblocks.spawnFallingNode = (nodename, x, y) => {
+dragonblocks.spawnFallingNode = (nodename, map, x, y) => {
 	setTimeout(_ => {
-		dragonblocks.map.activate(x, y);
+		map.activate(x, y);
 	}, 50);
 
-	dragonblocks.setNode(x, y, "air");
+	map.setNode(x, y, "air");
 
-	let entity = dragonblocks.spawnEntity("dragonblocks:falling_node", x, y);
+	let entity = map.spawnEntity("dragonblocks:falling_node", x, y);
 	entity.meta.nodeName = nodename;
 	entity.texture = dragonblocks.nodes[nodename].texture;
 	entity.updateTexture();

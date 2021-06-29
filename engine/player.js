@@ -57,20 +57,14 @@ dragonblocks.registerEntity({
 	}
 });
 
-dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
-	constructor()
+dragonblocks.Player = class extends dragonblocks.SpawnedEntity
+{
+	constructor(data, map)
 	{
-		if (dragonblocks.worldIsLoaded) {
-			super(dragonblocks.world.spawnedEntities.filter(entity => {
-				return entity.name == "dragonblocks:player";
-			})[0]);
-
-			dragonblocks.world.spawnedEntities = dragonblocks.world.spawnedEntities.filter(entity => {
-				return entity.name != "dragonblocks:player";
-			});
-		} else {
-			super(dragonblocks.entities["dragonblocks:player"], dragonblocks.map.width / 2, 5);
-		}
+		if (data)
+			super(data, map);
+		else
+			super(dragonblocks.entities["dragonblocks:player"], map, map.width / 2, 5);
 
 		let self = this;
 
@@ -78,10 +72,10 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 		this.skin = this.meta.skin;
 
 		// Inventory
-		this.tmp.inventory = new dragonblocks.InventoryGroup();									// Create Inventory Group that can hold multible Inventories
+		this.tmp.inventory = new dragonblocks.InventoryGroup();									// Create inventory group that can hold multiple inventories
 
 		// Main Inventory
-		this.tmp.mainInventory = new dragonblocks.Inventory(32, 8);								// The Main Inventory
+		this.tmp.mainInventory = new dragonblocks.Inventory(32, 8);								// The main Inventory
 
 		if (this.meta.mainInventory)
 			this.tmp.mainInventory.deserialize(this.meta.mainInventory);						// Load saved Inventory
@@ -89,7 +83,7 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 		this.tmp.mainInventory.addEventListener("updateStack", event => {
 			self.meta.mainInventory = this.tmp.mainInventory.serialize();						// Save inventory after every change
 
-			if (self.gamemode == "creative" && event.stack.count > 1)			// Keep itemcount of every stack at one when in creative
+			if (self.gamemode == "creative" && event.stack.count > 1)							// Keep count of every stack at one when in creative
 				event.stack.count = 1;
 		});
 
@@ -138,16 +132,17 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 
 		// Map Scroll
 		setInterval(_ => {
-			if (dragonblocks.map.displayLeft + dragonblocks.map.displayWidth < self.x + self.width + 3)
-				dragonblocks.map.displayLeft = parseInt(self.x + self.width + 3 - dragonblocks.map.displayWidth);
-			else if (dragonblocks.map.displayLeft > self.x - 2)
-				dragonblocks.map.displayLeft = parseInt(self.x - 2);
-			if (dragonblocks.map.displayTop + dragonblocks.map.displayHeight < self.y + self.height + 3)
-				dragonblocks.map.displayTop = parseInt(self.y + self.height + 3 - dragonblocks.map.displayHeight);
-			else if (dragonblocks.map.displayTop > self.y - 2)
-				dragonblocks.map.displayTop = parseInt(self.y - 2);
+			if (map.displayLeft + map.displayWidth < self.x + self.width + 3)
+				map.displayLeft = parseInt(self.x + self.width + 3 - map.displayWidth);
+			else if (map.displayLeft > self.x - 2)
+				map.displayLeft = parseInt(self.x - 2);
 
-			dragonblocks.map.updateGraphics();
+			if (map.displayTop + map.displayHeight < self.y + self.height + 3)
+				map.displayTop = parseInt(self.y + self.height + 3 - map.displayHeight);
+			else if (map.displayTop > self.y - 2)
+				map.displayTop = parseInt(self.y - 2);
+
+			map.updateGraphics();
 		});
 
 		// Controls
@@ -225,8 +220,6 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 			});
 		}
 
-		let mapDisplay = document.getElementById("dragonblocks.map");
-
 		addEventListener("mouseup", event => {
 			if (event.which == 1)
 				self.digStop();
@@ -238,12 +231,12 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 		});
 
 		// Map Interaction Controls
-		for (let x = 0; x < dragonblocks.map.displayWidth; x++) {
-			for (let y = 0; y < dragonblocks.map.displayHeight; y++) {
+		for (let x = 0; x < map.displayWidth; x++) {
+			for (let y = 0; y < map.displayHeight; y++) {
 				let nodeDisplay = document.getElementById("dragonblocks.map.node[" + x + "][" + y + "]");
 
 				nodeDisplay.addEventListener("mouseover", event => {
-					if (self.canReach(x + dragonblocks.map.displayLeft, y + dragonblocks.map.displayTop))
+					if (self.canReach(x + map.displayLeft, y + map.displayTop))
 						event.srcElement.style.boxShadow = "0 0 0 1px black inset";
 				});
 
@@ -252,7 +245,7 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 				});
 
 				nodeDisplay.addEventListener("mousedown", event => {
-					let [ix, iy] = [x + dragonblocks.map.displayLeft, y + dragonblocks.map.displayTop];
+					let [ix, iy] = [x + map.displayLeft, y + map.displayTop];
 
 					switch(event.which) {
 						case 1:
@@ -266,6 +259,11 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 				});
 			}
 		}
+	}
+
+	serialize()
+	{
+		return dblib.removeTmp([this])[0];
 	}
 
 	set skin(value)
@@ -391,4 +389,4 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity{
 	}
 };
 
-Object.assign(dragonblocks.Player.prototype, dragonblocks.MapInteraction);	//Mixin
+Object.assign(dragonblocks.Player.prototype, dragonblocks.MapInteraction);	// Mixin

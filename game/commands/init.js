@@ -22,7 +22,7 @@ dragonblocks.registerChatcommand({
 			default:
 				commands.help(arg);
 				break;
-		}	
+		}
 	}
 });
 dragonblocks.registerChatcommand({
@@ -39,7 +39,7 @@ dragonblocks.registerChatcommand({
 	func: arg => {
 		let x = parseInt(arg.split(" ")[0]);
 		let y = parseInt(arg.split(" ")[1]);
-		if(dragonblocks.map.contains(x, y)){
+		if(dragonblocks.player.map.withinBounds(x, y)){
 			dragonblocks.player.teleport(x, y, true);
 			dragonblocks.chatMessage("Teleported to " + x + ", " + y);
 		}
@@ -55,10 +55,10 @@ dragonblocks.registerChatcommand({
 		let x = parseInt(arg.split(" ")[0]);
 		let y = parseInt(arg.split(" ")[1]);
 		let node = arg.split(" ")[2];
-		if(dragonblocks.map.contains(x, y)){
+		if(dragonblocks.player.map.withinBounds(x, y)){
 			if(dragonblocks.nodes[node]){
-				dragonblocks.setNode(x, y, node);
-				dragonblocks.chatMessage("Set " + node + " to " + x + ", " + y);	
+				dragonblocks.player.map.setNode(x, y, node);
+				dragonblocks.chatMessage("Set " + node + " to " + x + ", " + y);
 			}
 			else
 				dragonblocks.chatMessage("Unknown Node.");

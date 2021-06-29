@@ -1,4 +1,4 @@
-var wool = {};
+wool = {};
 wool.colors = ["black", "blue", "brown", "cyan", "dark_green", "dark_grey", "green", "grey", "magenta", "orange", "pink", "red", "violet", "white", "yellow"];
 for(let color of wool.colors){
 	dragonblocks.registerNode({

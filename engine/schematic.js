@@ -59,14 +59,14 @@ dragonblocks.Schematic = class
 		}
 	}
 
-	apply(x, y)
+	apply(map, x, y)
 	{
 		for (let pixel of this.data) {
 			let mx, my;
 			mx = pixel.x + x;
 			my = pixel.y + y;
 
-			let node = dragonblocks.getNode(mx, my);
+			let node = map.getNode(mx, my);
 			if (! node)
 				continue;
 
@@ -75,14 +75,14 @@ dragonblocks.Schematic = class
 			let doApply = true;
 
 			for (let func of this.functions) {
-				if (func(nodeDef, mx, my, pixel.node) == false) {
+				if (func(nodeDef, map, mx, my, pixel.node) == false) {
 					doApply = false;
 					break;
 				}
 			}
 
 			if (doApply)
-				dragonblocks.setNode(mx, my, pixel.node);
+				map.setNode(mx, my, pixel.node);
 		}
 
 		return this;

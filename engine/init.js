@@ -116,28 +116,26 @@
 		loadingMods[modname] = false;
 	};
 
-	dragonblocks.start = selectedMods => {
+	dragonblocks.loadMods = selectedMods = _ => {
+		dragonblocks.loadedMods = {};
+
+		for (let mod in selectedMods)
+			if (selectedMods[mod])
+				loadMod(mod);
+
+		for (let mod in dragonblocks.gamemods)
+			loadMod(mod);
+	};
+
+	dragonblocks.start = worldProperties => {
 		dragonblocks.log("Starting");
 
 		for (let func of dragonblocks.onStartCallbacks)
 			func();
 
 		setTimeout(_ => {
-			dragonblocks.loadedMods = {};
-
-			for (let mod in selectedMods)
-				if (selectedMods[mods])
-					loadMod(mod);
-
-			for (let mod in dragonblocks.gamemods)
-				loadMod(mod);
-
-			dragonblocks.map = new dragonblocks.Map();
-			dragonblocks.map.load();
-
-			dragonblocks.player = new dragonblocks.Player();
-
-			dragonblocks.worldIsLoaded || dragonblocks.generateMap();
+			dragonblocks.world = new dragonblocks.World(worldProperties);
+			dragonblocks.player = dragonblocks.world.player;
 
 			for (let func of dragonblocks.onStartedCallbacks)
 				func();
@@ -160,7 +158,8 @@
 
 		if (dragonblocks.loggedin)
 			setTimeout(_ => {
-				dragonblocks.save();
+				dragonblocks.player.despawn();
+				dragonblocks.world.save();
 				location.reload();
 			});
 		else

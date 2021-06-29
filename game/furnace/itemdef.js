@@ -5,14 +5,14 @@ dragonblocks.registerNode({
 	hardness: 10,
 	desc: "Furnace",
 	stable: true,
-	onset: (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onset: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		meta.inventory = new furnace.Inventory();
 		if(meta.inventoryString)
 			meta.inventory.ceserialize(meta.inventoryString);
 	},
-	onclick: (x, y) => {
-		let meta = dragonblocks.getNode(x, y).meta;
+	onclick: (map, x, y) => {
+		let meta = map.getNode(x, y).meta;
 		dragonblocks.player.setInventoryElements([meta.inventory, dragonblocks.player.tmp.mainInventory]);
 		dragonblocks.player.openInventory();
 		dragonblocks.player.onNextInventoryClose = _ => {
@@ -20,8 +20,8 @@ dragonblocks.registerNode({
 			meta.inventoryString = meta.inventory.serialize();
 		};
 	},
-	ondig: (x, y) => {
-		return dragonblocks.getNode(x, y).meta.inventory.isEmpty();
+	ondig: (map, x, y) => {
+		return map.getNode(x, y).meta.inventory.isEmpty();
 	},
 });
 for(let i = 0; i < 6; i++){

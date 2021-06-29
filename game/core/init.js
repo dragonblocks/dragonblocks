@@ -63,16 +63,16 @@ dragonblocks.registerNode({
 	texture: "core_lava.png",
 	groups: ["liquid"],
 	desc: "Lava",
-	onset: (x, y) => {
-		dragonblocks.getNode(x, y).meta.lavaInterval = setInterval(_ => {
+	onset: (map, x, y) => {
+		map.getNode(x, y).meta.lavaInterval = setInterval(_ => {
 			for(let ix = x - 1; ix <= x + 1; ix++)
 				for(let iy = y - 1; iy <= y + 1; iy++)
-					if(dragonblocks.getNode(ix, iy) && dragonblocks.getNode(ix, iy).toNode().lavacooling)
-						dragonblocks.setNode(x, y, "core:obsidian");
+					if(map.getNode(ix, iy) && map.getNode(ix, iy).toNode().lavacooling)
+						map.setNode(x, y, "core:obsidian");
 		}, 2000);
 	},
-	onremove: (x, y) => {
-		clearInterval(dragonblocks.getNode(x, y).meta.lavaInterval);
+	onremove: (map, x, y) => {
+		clearInterval(map.getNode(x, y).meta.lavaInterval);
 	},
 	liquid: true,
 });
