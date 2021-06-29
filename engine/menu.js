@@ -25,16 +25,15 @@ dragonblocks.Menu = class
 {
 	constructor()
 	{
-		let display = document.body.appendChild(document.createElement("div"));
-		display.id = "dragonblocks.menu";
-		display.style.position = "fixed";
-		display.style.backgroundColor = "#7E7E7E";
-		display.style.width = "500px";
-		display.style.height = "10px";
-		display.style.visibility = "hidden";
+		this.display = document.body.appendChild(document.createElement("div"));
+		this.display.style.position = "fixed";
+		this.display.style.backgroundColor = "#7E7E7E";
+		this.display.style.width = "500px";
+		this.display.style.height = "10px";
+		this.display.style.visibility = "hidden";
 
-		dblib.center(display);
-		dblib.centerVertical(display);
+		dblib.center(this.display);
+		dblib.centerVertical(this.display);
 
 		let head = document.createElement("div");
 
@@ -57,7 +56,7 @@ dragonblocks.Menu = class
 		dragonblocks.gui.closeLayer();
 		dragonblocks.keyHandler.unlockAll();
 
-		document.getElementById("dragonblocks.menu").style.visibility = "hidden";
+		this.display.style.visibility = "hidden";
 	}
 
 	open()
@@ -68,21 +67,20 @@ dragonblocks.Menu = class
 		dragonblocks.keyHandler.lockAll();
 		dragonblocks.keyHandler.unlock("Escape");
 
-		document.getElementById("dragonblocks.menu").style.visibility = "visible";
+		this.display.style.visibility = "visible";
 	}
 
 	addElement(elem)
 	{
-		let menu = document.getElementById("dragonblocks.menu");
-		elem = menu.appendChild(elem);
+		elem = this.display.appendChild(elem);
 
 		elem.style.position = "absolute";
-		elem.style.top = menu.offsetHeight + "px";
+		elem.style.top = this.display.offsetHeight + "px";
 		elem.style.width = "80%";
 		dblib.center(elem);
 
-		menu.style.height = menu.offsetHeight + 10 + elem.offsetHeight + "px";
-		dblib.centerVertical(menu);
+		this.display.style.height = this.display.offsetHeight + 10 + elem.offsetHeight + "px";
+		dblib.centerVertical(this.display);
 
 		return elem;
 	}
@@ -93,8 +91,11 @@ dragonblocks.Menu = class
 		elem.innerHTML = html;
 		elem.style.fontSize = "20px";
 		elem.style.borderRadius = "0%";
+
+		let self = this;
+
 		elem.addEventListener("click", event => {
-			dragonblocks.menu.close();
+			self.close();
 			func && func(event);
 		});
 
