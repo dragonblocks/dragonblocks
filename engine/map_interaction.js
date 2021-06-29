@@ -24,33 +24,33 @@
 dragonblocks.MapInteraction = {
 	initMapInteraction()
 	{
-		let crack = document.getElementById("dragonblocks.map").appendChild(document.createElement("div"));
-		crack.id = "dragonblocks.crack[" + this.id + "]";
-		crack.style.position = "absolute";
-		crack.style.visibility = "hidden";
-		crack.style.backgroundSize = "cover";
-		crack.style.height = dragonblocks.settings.map.scale + "px";
-		crack.style.width = dragonblocks.settings.map.scale + "px";
-		crack.style.boxShadow = "0 0 0 1px black inset";
-		crack.style.zIndex = 2;
+		this.tmp.crackDisplay = this.map.entityContainer.appendChild(document.createElement("div"));
+		this.tmp.crackDisplay.style.position = "absolute";
+		this.tmp.crackDisplay.style.visibility = "hidden";
+		this.tmp.crackDisplay.style.backgroundSize = "cover";
+		this.tmp.crackDisplay.style.height = dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.crackDisplay.style.width = dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.crackDisplay.style.boxShadow = "0 0 0 1px black inset";
 
 		let self = this;
 
-		crack.addEventListener("mouseleave", event => {
+		this.tmp.crackDisplay.addEventListener("mouseleave", event => {
 			self.digStop();
-			let [x, y] = self.map.getScreenCoordinates(event.srcElement.offsetLeft, event.srcElement.offsetTop);
-			self.map.getNodeDisplay(x, y).style.boxShadow = "none";
+			dragonblocks.mapDisplay.getNode(event.srcElement.offsetLeft / dragonblocks.settings.mapDisplay.scale - dragonblocks.mapDisplay.left, event.srcElement.offsetTop / dragonblocks.settings.mapDisplay.scale - dragonblocks.mapDisplay.top).style.boxShadow = "none";
 		});
 
-		crack.addEventListener("mouseover", event => {
-			let [x, y] = self.map.getScreenCoordinates(event.srcElement.offsetLeft + document.getElementById("dragonblocks.map").offsetLeft, event.srcElement.offsetTop + document.getElementById("dragonblocks.map").offsetTop);
-			self.map.getNodeDisplay(x, y).style.boxShadow = "0 0 0 1px black inset";
+		this.tmp.crackDisplay.addEventListener("mouseover", event => {
+			dragonblocks.mapDisplay.getNode(event.srcElement.offsetLeft / dragonblocks.settings.mapDisplay.scale - dragonblocks.mapDisplay.left, event.srcElement.offsetTop / dragonblocks.settings.mapDisplay.scale - dragonblocks.mapDisplay.top).style.boxShadow = "0 0 0 1px black inset";
 		});
+	},
+
+	updateMapInteractionMap()
+	{
+		this.tmp.crackDisplay = this.map.entityContainer.appendChild(this.tmp.crackDisplay);
 	},
 
 	dig(map, x, y)
 	{
-		console.log(this);
 		let node = map.getNode(x, y);
 
 		if (! node)
@@ -79,10 +79,9 @@ dragonblocks.MapInteraction = {
 		if (! this.canReach(x, y))
 			return;
 
-		let crack = document.getElementById("dragonblocks.crack[" + this.id + "]")
-		crack.style.visibility = "visible";
-		crack.style.left = (x - this.map.displayLeft) * dragonblocks.settings.map.scale + "px";
-		crack.style.top = (y - this.map.displayTop) * dragonblocks.settings.map.scale + "px";
+		this.tmp.crackDisplay.style.visibility = "inherit";
+		this.tmp.crackDisplay.style.left = x * dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.crackDisplay.style.top = y * dragonblocks.settings.mapDisplay.scale + "px";
 
 		dragonblocks.log("Punched Node at (" + x + ", " + y + ")");
 
@@ -115,10 +114,9 @@ dragonblocks.MapInteraction = {
 		} else {
 			nodeDef.playSound("dig");
 
-			let crack = document.getElementById("dragonblocks.crack[" + this.id + "]");
-			crack.style.background = dragonblocks.getTexture("crack" + Math.floor(node.meta.causedDamage / nodeDef.hardness * 5) + ".png");
-			crack.style.backgroundSize = "cover";
-			crack.style.zIndex = nodeDef.zIndex || "1";
+			this.tmp.crackDisplay.style.background = dragonblocks.getTexture("crack" + Math.floor(node.meta.causedDamage / nodeDef.hardness * 5) + ".png");
+			this.tmp.crackDisplay.style.backgroundSize = "cover";
+			this.tmp.crackDisplay.style.zIndex = nodeDef.zIndex || "1";
 
 			this.tmp.digTimeout = setTimeout(_ => {
 				self.digTick(x, y);
@@ -138,13 +136,13 @@ dragonblocks.MapInteraction = {
 		if (this.dig(this.map, x, y))
 			dragonblocks.handleNodeDrop(this.tmp.mainInventory, nodeDef, this.map, x, y);
 
-		document.getElementById("dragonblocks.crack[" + this.id + "]").style.visibility = "hidden";
+		this.tmp.crackDisplay.style.visibility = "hidden";
 	},
 
 	digStop()
 	{
 		clearTimeout(this.tmp.digTimeout);
-		document.getElementById("dragonblocks.crack[" + this.id + "]").style.visibility = "hidden";
+		this.tmp.crackDisplay.style.visibility = "hidden";
 	},
 
 	place(map, x, y, node)
@@ -167,7 +165,7 @@ dragonblocks.MapInteraction = {
 
 	build(x, y)
 	{
-		if(this.canReach(x, y)) {
+		if (this.canReach(x, y)) {
 			let oldNodeDef = this.map.getNode(x, y).toNode();
 			oldNodeDef.onclick && oldNodeDef.onclick(this.map, x, y);
 

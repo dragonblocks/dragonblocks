@@ -183,6 +183,7 @@
 		"group",
 		"builtin",
 		"map_node",
+		"map_display",
 		"map",
 		"item_stack",
 		"inventory",

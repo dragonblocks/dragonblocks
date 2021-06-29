@@ -25,13 +25,16 @@ dragonblocks.Map = class
 {
 	constructor(data)
 	{
+		this.active = false;
+
+		this.entityContainer = dragonblocks.mapDisplay.element.appendChild(document.createElement("div"));
+		this.entityContainer.style.position = "absolute";
+		this.entityContainer.style.visibility = "hidden";
+
 		if (data)
 			this.deserialize(data);
 		else
 			this.clear();
-
-		this.initGraphics();
-		this.updateGraphics();
 	}
 
 	serialize()
@@ -65,6 +68,18 @@ dragonblocks.Map = class
 
 		for (let entity of data.entities)
 			new dragonblocks.SpawnedEntity(entity);
+	}
+
+	setActive()
+	{
+		this.active = true;
+		this.entityContainer.style.visibility = "inherit";
+	}
+
+	setInactive()
+	{
+		this.active = false;
+		this.entityContainer.style.visibility = "hidden";
 	}
 
 	clear()
@@ -109,7 +124,7 @@ dragonblocks.Map = class
 			let nodeDef = node.toNode();
 			nodeDef.onset && nodeDef.onset(this, x, y);
 
-			this.updateNodeGraphics(x, y);
+			this.active && dragonblocks.mapDisplay.updateNode(x, y);
 		}
 	}
 
@@ -127,80 +142,6 @@ dragonblocks.Map = class
 
 				for (let func of dragonblocks.onActivateCallbacks)
 					func(this, ix, iy);
-			}
-		}
-	}
-
-	getNodeDisplay(x, y)
-	{
-		return document.getElementById("dragonblocks.map.node[" + (x - this.displayLeft) + "][" + (y - this.displayTop) + "]");
-	}
-
-	getScreenCoordinates(x, y)
-	{
-		return [Math.floor(x / dragonblocks.settings.map.scale) + this.displayLeft, Math.floor(y / dragonblocks.settings.map.scale) + this.displayTop];
-	}
-
-	updateNodeGraphics(x, y)
-	{
-		let nodeDisplay = this.getNodeDisplay(x, y);
-
-		if (! nodeDisplay)
-			return;
-
-		let nodeDef = this.getNode(x, y).toNode();
-
-		if (! nodeDef)
-			return;
-
-		nodeDisplay.style.background = dragonblocks.getTexture(nodeDef.texture);
-		nodeDisplay.style.backgroundSize = "cover";
-		nodeDisplay.style.zIndex = nodeDef.zIndex || "1";
-	}
-
-	updateGraphics()
-	{
-		if (this.displayLeft < 0)
-			this.displayLeft = 0;
-		else if (this.displayLeft + this.displayWidth > this.width)
-			this.displayLeft = this.width - this.displayWidth;
-
-		if (this.displayTop < 0)
-			this.displayTop = 0;
-		else if (this.displayTop + this.displayHeight > this.height)
-			this.displayTop = this.height - this.displayHeight;
-
-		for (let x = 0; x < this.displayWidth; x++) {
-			for(let y = 0; y < this.displayHeight; y++) {
-				this.updateNodeGraphics(x + this.displayLeft, y + this.displayTop);
-			}
-		}
-	}
-
-	initGraphics()
-	{
-		this.displayWidth = Math.min(Math.ceil(innerWidth / dragonblocks.settings.map.scale), this.width);
-		this.displayHeight = Math.min(Math.ceil(innerHeight / dragonblocks.settings.map.scale), this.height);
-
-		let display = document.body.insertBefore(document.createElement("div"), document.body.firstChild);
-		display.id = "dragonblocks.map";
-		display.style.width = this.displayWidth * dragonblocks.settings.map.scale + "px";
-		display.style.height = this.displayHeight * dragonblocks.settings.map.scale + "px";
-		display.style.position = "fixed";
-		display.style.top = "0px";
-		display.style.left = "0px";
-		display.style.backgroundColor = "skyblue";
-		display.style.visibility = "hidden";
-
-		for (let x = 0; x < this.displayWidth; x++){
-			for (let y = 0; y < this.displayHeight; y++){
-				let nodeDisplay = display.appendChild(document.createElement("div"));
-				nodeDisplay.id = "dragonblocks.map.node[" + x + "][" + y + "]";
-				nodeDisplay.style.position = "absolute";
-				nodeDisplay.style.top = y * dragonblocks.settings.map.scale + "px";
-				nodeDisplay.style.left = x * dragonblocks.settings.map.scale + "px";
-				nodeDisplay.style.width = dragonblocks.settings.map.scale + "px";
-				nodeDisplay.style.height = dragonblocks.settings.map.scale + "px";
 			}
 		}
 	}
@@ -225,11 +166,3 @@ dragonblocks.onActivateCallbacks = [];
 dragonblocks.registerOnActivate = func => {
 	dragonblocks.onActivateCallbacks.push(func);
 };
-
-dragonblocks.registerOnStarted(_ => {
-	document.getElementById("dragonblocks.map").style.visibility = "visible";
-});
-
-dragonblocks.registerOnQuit(_ => {
-	document.getElementById("dragonblocks.map").style.visibility = "hidden";
-});

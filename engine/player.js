@@ -130,21 +130,6 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 		this.tmp.defaultTool = dragonblocks.tools[this.meta.creative ? "dragonblocks:creative_hand" : "dragonblocks:hand"];
 		this.initMapInteraction();
 
-		// Map Scroll
-		setInterval(_ => {
-			if (map.displayLeft + map.displayWidth < self.x + self.width + 3)
-				map.displayLeft = parseInt(self.x + self.width + 3 - map.displayWidth);
-			else if (map.displayLeft > self.x - 2)
-				map.displayLeft = parseInt(self.x - 2);
-
-			if (map.displayTop + map.displayHeight < self.y + self.height + 3)
-				map.displayTop = parseInt(self.y + self.height + 3 - map.displayHeight);
-			else if (map.displayTop > self.y - 2)
-				map.displayTop = parseInt(self.y - 2);
-
-			map.updateGraphics();
-		});
-
 		// Controls
 		dragonblocks.keyHandler.down(" ", _ => {
 			self.jump();
@@ -231,12 +216,12 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 		});
 
 		// Map Interaction Controls
-		for (let x = 0; x < map.displayWidth; x++) {
-			for (let y = 0; y < map.displayHeight; y++) {
-				let nodeDisplay = document.getElementById("dragonblocks.map.node[" + x + "][" + y + "]");
+		for (let x = 0; x < dragonblocks.mapDisplay.width; x++) {
+			for (let y = 0; y < dragonblocks.mapDisplay.height; y++) {
+				let nodeDisplay = dragonblocks.mapDisplay.getNode(x, y);
 
 				nodeDisplay.addEventListener("mouseover", event => {
-					if (self.canReach(x + map.displayLeft, y + map.displayTop))
+					if (self.canReach(x + dragonblocks.mapDisplay.left, y + dragonblocks.mapDisplay.top))
 						event.srcElement.style.boxShadow = "0 0 0 1px black inset";
 				});
 
@@ -245,7 +230,7 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 				});
 
 				nodeDisplay.addEventListener("mousedown", event => {
-					let [ix, iy] = [x + map.displayLeft, y + map.displayTop];
+					let [ix, iy] = [x + dragonblocks.mapDisplay.left, y + dragonblocks.mapDisplay.top];
 
 					switch(event.which) {
 						case 1:
@@ -264,6 +249,13 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 	serialize()
 	{
 		return dblib.removeTmp([this])[0];
+	}
+
+	setMap(map, x, y)
+	{
+		super.setMap(map, x, y);
+		this.updateMapInteractionMap();
+		dragonblocks.mapDisplay.setMap(map);
 	}
 
 	set skin(value)

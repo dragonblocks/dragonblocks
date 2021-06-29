@@ -73,6 +73,13 @@ dragonblocks.SpawnedEntity = class
 		return dragonblocks.entities[this.name];
 	}
 
+	setMap(map, x, y)
+	{
+		this.tmp.display = map.entityContainer.appendChild(this.display);
+		this.tmp.map = map;
+		this.teleport(x, y);
+	}
+
 	despawn()
 	{
 		let entityDef = this.toEntity();
@@ -86,8 +93,7 @@ dragonblocks.SpawnedEntity = class
 		clearInterval(this.physicInterval);
 		clearInterval(this.tickInterval);
 
-		let display = document.getElementById("dragonblocks.entity[" + this.id + "]");
-		display && display.remove();
+		this.tmp.display && this.tmp.display.remove();
 	}
 
 	restorePhysics()
@@ -194,24 +200,23 @@ dragonblocks.SpawnedEntity = class
 
 	addGraphics(obj)
 	{
-		let display = document.getElementById("dragonblocks.map").appendChild(document.createElement("div"));
-		display.id = "dragonblocks.entity[" + this.id + "]";
-		display.style.position = "absolute";
-		display.style.width = this.width * dragonblocks.settings.map.scale + "px";
-		display.style.height = this.height * dragonblocks.settings.map.scale + "px";
-		display.style.zIndex = "0";
+		this.tmp.display = this.map.entityContainer.appendChild(document.createElement("div"));
+		this.tmp.display.style.position = "absolute";
+		this.tmp.display.style.width = this.width * dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.display.style.height = this.height * dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.display.style.zIndex = "0";
 
-		display.addEventListener("mouseover", event => {
+		this.tmp.display.addEventListener("mouseover", event => {
 			event.srcElement.style.boxShadow = "0 0 0 1px black inset";
 		});
 
-		display.addEventListener("mouseleave", event => {
+		this.tmp.display.addEventListener("mouseleave", event => {
 			event.srcElement.style.boxShadow = "none";
 		});
 
 		let self = this;
 
-		display.addEventListener("mousedown", event => {
+		this.tmp.display.addEventListener("mousedown", event => {
 			let entityDef = self.toEntity();
 
 			switch (event.which) {
@@ -231,20 +236,17 @@ dragonblocks.SpawnedEntity = class
 
 	async updateGraphics()
 	{
-		let display = document.getElementById("dragonblocks.entity[" + this.id + "]");
-
-		if (! display)
+		if (! this.tmp.display)
 			return;
 
-		display.style.left = (this.x - this.map.displayLeft) * dragonblocks.settings.map.scale + "px";
-		display.style.top = (this.y - this.map.displayTop) * dragonblocks.settings.map.scale + "px";
+		this.tmp.display.style.left = this.x * dragonblocks.settings.mapDisplay.scale + "px";
+		this.tmp.display.style.top = this.y * dragonblocks.settings.mapDisplay.scale + "px";
 	}
 
 	updateTexture()
 	{
-		let display = document.getElementById("dragonblocks.entity[" + this.id + "]");
-		display.style.background = dragonblocks.getTexture(this.texture);
-		display.style.backgroundSize = "cover";
+		this.tmp.display.style.background = dragonblocks.getTexture(this.texture);
+		this.tmp.display.style.backgroundSize = "cover";
 	}
 
 	teleport(x, y)

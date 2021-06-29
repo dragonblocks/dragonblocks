@@ -42,10 +42,10 @@ dragonblocks.registerSkin = def => {
 	status.style.top = "5px";
 	status.style.left = "5px";
 
-	let columns = parseInt(parseInt(gui.display.style.width) / (dragonblocks.settings.map.scale * 1.5));
+	let columns = parseInt(parseInt(gui.display.style.width) / (dragonblocks.settings.mapDisplay.scale * 1.5));
 
 	let container = gui.create("div");
-	container.style.width = parseInt(columns * dragonblocks.settings.map.scale * 1.5) + "px";
+	container.style.width = parseInt(columns * dragonblocks.settings.mapDisplay.scale * 1.5) + "px";
 	container.style.position = "absolute";
 	container.style.top = "80px";
 	dblib.center(container);

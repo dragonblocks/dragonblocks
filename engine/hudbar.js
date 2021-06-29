@@ -32,7 +32,7 @@ dragonblocks.Hudbar = class
 
 		this.selectedSlot = 0;
 
-		let display = document.body.insertBefore(document.createElement("div"), document.getElementById("dragonblocks.map").nextSibling);
+		let display = document.body.insertBefore(document.createElement("div"), dragonblocks.mapDisplay.element.nextSibling);
 		display.id = "dragonblocks.hudbar[" + this.id + "]";
 		display.style.position = "fixed";
 		display.style.bottom = "5px";
@@ -41,7 +41,7 @@ dragonblocks.Hudbar = class
 
 		dblib.center(display);
 
-		for(let i = 0; i < this.slots; i++){
+		for (let i = 0; i < this.slots; i++) {
 			let slotDisplay = display.appendChild(document.createElement("div"));
 			slotDisplay.id = "dragonblocks.hudbar[" + this.id + "].slot[" + i + "]";
 			slotDisplay.style.position = "absolute";

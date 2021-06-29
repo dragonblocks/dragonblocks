@@ -36,9 +36,10 @@ dragonblocks.World = class
 			this.loadMods();
 
 			this.map = new dragonblocks.Map();
-			this.player = new dragonblocks.Player(null, this.map);
 
+			this.player = new dragonblocks.Player(null, this.map);
 			this.player.setGamemode(properties.gamemode);
+
 			dragonblocks.mapgen.generate(properties.mapgen, this.map);
 		}
 	}
