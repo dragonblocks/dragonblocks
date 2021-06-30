@@ -154,7 +154,7 @@
 
 		if (dragonblocks.loggedin)
 			setTimeout(_ => {
-				dragonblocks.player.despawn();
+				dragonblocks.player.removeFromMap();
 				dragonblocks.world.save();
 				location.reload();
 			});

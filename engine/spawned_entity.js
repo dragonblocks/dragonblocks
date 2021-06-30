@@ -72,10 +72,22 @@ dragonblocks.SpawnedEntity = class
 		return dragonblocks.entities[this.name];
 	}
 
+	removeFromMap()
+	{
+		let self = this;
+		this.map.entities = this.map.entities.filter(entity => {
+			return entity != self;
+		});
+	}
+
 	setMap(map, x, y)
 	{
-		this.tmp.display = map.entityContainer.appendChild(this.display);
+		this.removeFromMap();
+		map.entities.push(this);
+
 		this.tmp.map = map;
+		this.tmp.display = map.entityContainer.appendChild(this.display);
+
 		this.teleport(x, y);
 	}
 
@@ -84,10 +96,7 @@ dragonblocks.SpawnedEntity = class
 		let entityDef = this.toEntity();
 		entityDef.ondespawn && entityDef.ondespawn(this);
 
-		let self = this;
-		this.map.entities = this.map.entities.filter(entity => {
-			return entity != self;
-		});
+		this.removeFromMap();
 
 		clearInterval(this.physicInterval);
 		clearInterval(this.tickInterval);
