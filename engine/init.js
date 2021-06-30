@@ -79,10 +79,6 @@
 		throw error;
 	};
 
-	dragonblocks.getToken = _ => {
-		return "#" + (Math.random() * 10).toString().replace(".", "");
-	};
-
 	dragonblocks.getModInfo = modname => {
 		return dragonblocks.mods[modname] || dragonblocks.gamemods[modname];
 	};

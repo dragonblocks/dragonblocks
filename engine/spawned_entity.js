@@ -29,7 +29,6 @@ dragonblocks.SpawnedEntity = class
 		this.tmp = {map};
 
 		if (def instanceof dragonblocks.Entity) {
-			this.id = dragonblocks.getToken();
 			this.jumping = this.movingRight = this.movingLeft = this.movingUp = this.movingDown = false;
 			this.x = x;
 			this.y = y;
@@ -85,9 +84,9 @@ dragonblocks.SpawnedEntity = class
 		let entityDef = this.toEntity();
 		entityDef.ondespawn && entityDef.ondespawn(this);
 
-		let id = this.id;
+		let self = this;
 		this.map.entities = this.map.entities.filter(entity => {
-			return entity.id != id;
+			return entity != self;
 		});
 
 		clearInterval(this.physicInterval);
