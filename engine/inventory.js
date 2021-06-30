@@ -26,7 +26,6 @@ dragonblocks.Inventory = class extends EventTarget
 	constructor(slots, columns)
 	{
 		super();
-		this.id = dragonblocks.getToken();
 
 		this.slots = slots;
 		this.columns = columns;
@@ -102,54 +101,21 @@ dragonblocks.Inventory = class extends EventTarget
 
 	draw(parent, x, y)
 	{
-		if (this.display) {
-			let display = this.getDisplay();
-			if (display.parentElement == parent) {
-				display.style.left = x + "px";
-				display.style.top = y + "px";
-				return false;
-			} else {
-				this.remove();
-			}
-		}
+		if (! this.display)
+			this.initGraphics();
 
-		this.display = true;
+		if (this.display.parentElement != parent)
+			this.display = parent.appendChild(this.display);
 
-		let display = parent.appendChild(document.createElement("div"));
-		display.id = "dragonblocks.inventory[" + this.id + "]";
-		display.style.position = "absolute";
-		display.style.left = x + "px";
-		display.style.top = y + "px";
-		display.style.width =  this.calculateWidth() + "px";
-		display.style.height = this.calculateHeight() + "px";
+		this.display.style.left = x + "px";
+		this.display.style.top = y + "px";
 
-		let scale = dragonblocks.settings.inventory.scale * 1.1;
-		let offset = dragonblocks.settings.inventory.scale * 0.1;
-
-		for (let i in this.list) {
-			let x = i % this.columns;
-			let y = (i - x) / this.columns;
-			this.list[i].draw(display, offset + x * scale, offset + y * scale);
-		}
-
-		return true;
+		this.update();
 	}
 
 	remove()
 	{
-		this.getDisplay().remove();
-		this.display = false;
-	}
-
-	show()
-	{
-		this.getDisplay().style.visibility = "inherit";
-		this.update();
-	}
-
-	hide()
-	{
-		this.getDisplay().style.visibility = "hidden";
+		this.display.remove();
 	}
 
 	update()
@@ -163,9 +129,21 @@ dragonblocks.Inventory = class extends EventTarget
 		return this.list[i];
 	}
 
-	getDisplay()
+	initGraphics()
 	{
-		return document.getElementById("dragonblocks.inventory[" + this.id + "]");
+		this.display = document.createElement("div");
+		this.display.style.position = "absolute";
+		this.display.style.width =  this.calculateWidth() + "px";
+		this.display.style.height = this.calculateHeight() + "px";
+
+		let scale = dragonblocks.settings.inventory.scale * 1.1;
+		let offset = dragonblocks.settings.inventory.scale * 0.1;
+
+		for (let i in this.list) {
+			let x = i % this.columns;
+			let y = (i - x) / this.columns;
+			this.list[i].draw(this.display, offset + x * scale, offset + y * scale);
+		}
 	}
 };
 

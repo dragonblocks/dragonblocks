@@ -36,6 +36,7 @@ dragonblocks.CreativeInventory = class extends dragonblocks.Inventory
 
 		for (let i = 0; i < this.slots; i++) {
 			let stack = this.list[i];
+
 			stack.addEventListener("update", event => {
 				if (event.stack.refilling)
 					return;
@@ -52,38 +53,45 @@ dragonblocks.CreativeInventory = class extends dragonblocks.Inventory
 		return super.calculateHeight() + dragonblocks.settings.inventory.scale;
 	}
 
-	draw(parent, x, y)
+	update()
 	{
-		if (! super.draw(parent, x, y))
-			return false;
+		if (this.page == -1)
+			this.page++;
 
-		let display = this.getDisplay();
-		display.style.height = this.calculateHeight();
+		if (this.page == this.pages)
+			this.page--;
 
-		let creativeDisplay = display.appendChild(document.createElement("div"));
-		creativeDisplay.id = "dragonblocks.inventory[" + this.id + "].creative";
-		creativeDisplay.style.height = dragonblocks.settings.inventory.scale + "px";
-		creativeDisplay.style.width = this.calculateWidth() + "px";
-		creativeDisplay.style.left = "0px";
-		creativeDisplay.style.top = super.calculateHeight() + "px";
-		creativeDisplay.style.position = "absolute";
+		this.pageDisplay.textContent = "Page " + (this.page + 1) + " of " + this.pages;
 
-		let pageDisplay = creativeDisplay.appendChild(document.createElement("span"));
-		pageDisplay.id = "dragonblocks.inventory[" + this.id + "].creative.page";
-		pageDisplay.style.color = "#343434";
-		pageDisplay.style.position = "absolute";
-		pageDisplay.style.left = dragonblocks.settings.inventory.scale * 1.1 + "px";
-		pageDisplay.style.width = "100%";
-		pageDisplay.style.fontSize = dragonblocks.settings.inventory.scale / (5 / 3) + "px";
-		pageDisplay.style.height = dragonblocks.settings.inventory.scale / (5 / 3) + "px";
+		for (let slot of this.list)
+			slot.update();
+	}
 
-		dblib.centerVertical(pageDisplay);
+	initGraphics()
+	{
+		super.initGraphics();
+
+		let pageContainer = this.display.appendChild(document.createElement("div"));
+		pageContainer.style.height = dragonblocks.settings.inventory.scale + "px";
+		pageContainer.style.width = this.calculateWidth() + "px";
+		pageContainer.style.left = "0px";
+		pageContainer.style.top = super.calculateHeight() + "px";
+		pageContainer.style.position = "absolute";
+
+		this.pageDisplay = pageContainer.appendChild(document.createElement("span"));
+		this.pageDisplay.style.color = "#343434";
+		this.pageDisplay.style.position = "absolute";
+		this.pageDisplay.style.left = dragonblocks.settings.inventory.scale * 1.1 + "px";
+		this.pageDisplay.style.width = "100%";
+		this.pageDisplay.style.fontSize = dragonblocks.settings.inventory.scale / (5 / 3) + "px";
+		this.pageDisplay.style.height = dragonblocks.settings.inventory.scale / (5 / 3) + "px";
+
+		dblib.centerVertical(this.pageDisplay);
 
 		let self = this;
 
 		for (let dir of ["left", "right"]) {
-			let arrow = creativeDisplay.appendChild(document.createElement("div"));
-			arrow.id = "dragonblocks.inventory[" + this.id + "].creative.arrow." + dir;
+			let arrow = pageContainer.appendChild(document.createElement("div"));
 			arrow.style.position = "absolute";
 			arrow.style.width = dragonblocks.settings.inventory.scale + "px";
 			arrow.style.height = dragonblocks.settings.inventory.scale + "px";
@@ -95,30 +103,15 @@ dragonblocks.CreativeInventory = class extends dragonblocks.Inventory
 				arrow.style.transform = "rotate(180deg)";
 
 			arrow.addEventListener("click", _ => {
-				if(dir == "right")
+				if (dir == "right")
 					self.page++;
 				else
 					self.page--;
+
 				self.update();
 			});
 
 			dblib.centerVertical(arrow);
 		}
-
-		this.update();
-	}
-
-	update()
-	{
-		if (this.page == -1)
-			this.page++;
-
-		if (this.page == this.pages)
-			this.page--;
-
-		document.getElementById("dragonblocks.inventory[" + this.id + "].creative.page").textContent = "Page " + (this.page + 1) + " of " + this.pages;
-
-		for (let slot of this.list)
-			slot.update();
 	}
 };

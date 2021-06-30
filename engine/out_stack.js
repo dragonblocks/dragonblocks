@@ -22,25 +22,23 @@
  */
 
 dragonblocks.addInventoryMenuDisplay = elem => {
-	return document.body.insertBefore(elem, dragonblocks.outStack.getDisplay());
+	return document.body.insertBefore(elem, dragonblocks.outStack.display);
 };
 
 setTimeout(_ => {
 	let out = dragonblocks.outStack = new dragonblocks.ItemStack();
 
 	out.draw(document.body, 0, 0);
-	out.getDisplay().style.position = "fixed";
+	out.display.style.position = "fixed";
 
 	out.addEventListener("redraw", _ => {
-		let display = out.getDisplay();
-		display.style.backgroundColor = "";
-		display.style.border = "none";
+		out.display.style.backgroundColor = "";
+		out.display.style.border = "none";
 	});
 
 	addEventListener("mousemove", event => {
-		let display = out.getDisplay();
-		display.style.left = event.clientX + 5 + "px";
-		display.style.top = event.clientY + 5 + "px";
+		out.display.style.left = event.clientX + 5 + "px";
+		out.display.style.top = event.clientY + 5 + "px";
 	});
 
 	out.update();

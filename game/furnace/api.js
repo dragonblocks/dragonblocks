@@ -1,6 +1,8 @@
 furnace.recipes = [];
-furnace.registerRecipe = function(obj){
-	if(! obj || ! obj.input || ! obj.output || ! obj.time)
+
+furnace.registerRecipe = def => {
+	if (! def || ! def.input || ! def.output || ! def.time)
 		return;
-	furnace.recipes.push(obj);
-}
+
+	furnace.recipes.push(def);
+};

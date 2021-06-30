@@ -31,54 +31,21 @@ dragonblocks.InventoryContainer = class extends EventTarget
 
 	draw(parent, x, y)
 	{
-		if (this.display) {
-			let display = this.getDisplay();
-			if (display.parentElement == parent) {
-				display.style.left = x + "px";
-				display.style.top = y + "px";
-				return false;
-			} else {
-				this.remove();
-			}
-		}
+		if (! this.display)
+			this.initGraphics();
 
-		let display = parent.appendChild(document.createElement("div"));
-		display.id = "dragonblocks.inventoryContainer[" + this.inventory.id + "]";
-		display.style.width = this.calculateWidth() + "px";
-		display.style.height = this.calculateHeight() + "px";
-		display.style.left = x + "px";
-		display.style.top = y + "px";
+		if (this.display.parentElement != parent)
+			this.display = parent.appendChild(this.display);
 
-		this.inventory.draw(display, dragonblocks.settings.inventory.scale * 1.1 * this.left, dragonblocks.settings.inventory.scale * 1.1 * this.top);
+		this.display.style.left = x + "px";
+		this.display.style.top = y + "px";
 
-		this.display = true;
-		return true;
-	}
-
-	serialize()
-	{
-		return this.inventory.serialize();
-	}
-
-	deserialize(str)
-	{
-		this.inventory.deserialize(str);
+		this.inventory.draw(this.display, dragonblocks.settings.inventory.scale * 1.1 * this.left, dragonblocks.settings.inventory.scale * 1.1 * this.top);
 	}
 
 	remove()
 	{
-		this.getDisplay().remove();
-	}
-
-	show()
-	{
-		this.getDisplay().style.visibility = "inherit";
-		this.update();
-	}
-
-	hide()
-	{
-		this.getDisplay().style.visibility = "hidden";
+		this.display.remove();
 	}
 
 	calculateWidth()
@@ -91,13 +58,10 @@ dragonblocks.InventoryContainer = class extends EventTarget
 		return this.inventory.calculateHeight() + dragonblocks.settings.inventory.scale * 1.1 * (this.top + this.bottom);
 	}
 
-	getDisplay()
+	initGraphics()
 	{
-		return document.getElementById("dragonblocks.inventoryContainer[" + this.inventory.id + "]");
-	}
-
-	update()
-	{
-		this.inventory.update();
+		this.display = document.createElement("div");
+		this.display.style.width = this.calculateWidth() + "px";
+		this.display.style.height = this.calculateHeight() + "px";
 	}
 };

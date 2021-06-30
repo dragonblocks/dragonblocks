@@ -35,10 +35,10 @@ dragonblocks.Craftfield = class extends dragonblocks.Inventory
 		let self = this;
 		this.resultfield.action = out => {
 			out.add(self.resultfield) && self.reduce();
-		}
+		};
 
 		this.addEventListener("updateStack", _ => {
-			self.update();
+			self.updateResult();
 		});
 	}
 
@@ -47,24 +47,13 @@ dragonblocks.Craftfield = class extends dragonblocks.Inventory
 		return super.calculateWidth() + dragonblocks.settings.inventory.scale * 1.1 * 2;
 	}
 
-	draw(parent, x, y)
-	{
-		if (! super.draw(parent, x, y))
-			return false;
-
-		this.resultfield.draw(this.getDisplay(), dragonblocks.settings.inventory.scale * 0.1 + (this.width + 1) * dragonblocks.settings.inventory.scale * 1.1, dragonblocks.settings.inventory.scale * 0.1 + (this.height / 2 - 0.5) * dragonblocks.settings.inventory.scale * 1.1);
-	}
-
 	reduce()
 	{
-		for (let stack of this.list) {
-			let vstack = new dragonblocks.ItemStack();
-			vstack.addOne(stack);
-		}
-		this.update();
+		for (let stack of this.list)
+			new dragonblocks.ItemStack().addOne(stack);
 	}
 
-	update()
+	updateResult()
 	{
 		this.resultfield.deserialize("");
 
@@ -72,5 +61,12 @@ dragonblocks.Craftfield = class extends dragonblocks.Inventory
 			if (recipe.match(this))
 				return this.resultfield.deserialize(recipe.result);
 		}
+	}
+
+	initGraphics()
+	{
+		super.initGraphics();
+
+		this.resultfield.draw(this.display, dragonblocks.settings.inventory.scale * 0.1 + (this.width + 1) * dragonblocks.settings.inventory.scale * 1.1, dragonblocks.settings.inventory.scale * 0.1 + (this.height / 2 - 0.5) * dragonblocks.settings.inventory.scale * 1.1);
 	}
 };

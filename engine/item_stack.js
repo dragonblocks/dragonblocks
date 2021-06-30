@@ -29,7 +29,6 @@ dragonblocks.ItemStack = class extends EventTarget
 
 		this.count = 0;
 		this.item = null;
-		this.id = dragonblocks.getToken();
 
 		if (itemstring)
 			this.deserialize(itemstring);
@@ -143,38 +142,29 @@ dragonblocks.ItemStack = class extends EventTarget
 		return this.addItems(itemstack, Math.ceil(itemstack.count / 2));
 	}
 
-	getDisplay()
-	{
-		return document.getElementById("dragonblocks.itemstack[" + this.id + "]");
-	}
-
 	draw(parent, x, y)
 	{
-		let display = parent.appendChild(document.createElement("div"));
-		display.id = "dragonblocks.itemstack[" + this.id + "]";
-		display.stackid = this.id;
-		display.style.borderStyle = "solid";
-		display.style.borderWidth = "1px";
-		display.style.borderColor = "#2D2D2D";
-		display.style.width = dragonblocks.settings.inventory.scale + "px";
-		display.style.height = dragonblocks.settings.inventory.scale + "px";
-		display.style.backgroundColor = "#343434";
-		display.style.position = "absolute";
-		display.style.left = x + "px";
-		display.style.top = y + "px";
+		this.display = parent.appendChild(document.createElement("div"));
+		this.display.style.borderStyle = "solid";
+		this.display.style.borderWidth = "1px";
+		this.display.style.borderColor = "#2D2D2D";
+		this.display.style.width = dragonblocks.settings.inventory.scale + "px";
+		this.display.style.height = dragonblocks.settings.inventory.scale + "px";
+		this.display.style.backgroundColor = "#343434";
+		this.display.style.position = "absolute";
+		this.display.style.left = x + "px";
+		this.display.style.top = y + "px";
 
-		let countDisplay = display.appendChild(document.createElement("span"));
-		countDisplay.id = "dragonblocks.itemstack[" + this.id + "].count";
-		countDisplay.stackid = this.id;
-		countDisplay.style.position = "absolute";
-		countDisplay.style.right = "5px";
-		countDisplay.style.bottom = "5px";
-		countDisplay.style.color = "white";
-		countDisplay.style.cursor = "default";
+		this.countDisplay = this.display.appendChild(document.createElement("span"));
+		this.countDisplay.style.position = "absolute";
+		this.countDisplay.style.right = "5px";
+		this.countDisplay.style.bottom = "5px";
+		this.countDisplay.style.color = "white";
+		this.countDisplay.style.cursor = "default";
 
 		let self = this;
 
-		display.addEventListener("mousedown", event => {
+		this.display.addEventListener("mousedown", event => {
 			let out = dragonblocks.outStack;
 
 			if (self.action)
@@ -196,12 +186,12 @@ dragonblocks.ItemStack = class extends EventTarget
 			}
 		});
 
-		display.addEventListener("mouseover", event => {
+		this.display.addEventListener("mouseover", event => {
 			self.focused = true;
 			self.redraw();
 		});
 
-		display.addEventListener("mouseleave", event => {
+		this.display.addEventListener("mouseleave", event => {
 			self.focused = false;
 			self.redraw();
 		});
@@ -215,31 +205,27 @@ dragonblocks.ItemStack = class extends EventTarget
 
 	redraw()
 	{
-		let display = this.getDisplay();
-
-		if (! display)
+		if (! this.display)
 			return;
-
-		let countDisplay = document.getElementById("dragonblocks.itemstack[" + this.id + "].count");
 
 		if (this.item) {
 			let item = this.toItem();
 
-			display.title = item.desc;
-			display.style.background = dragonblocks.getTexture(item.texture);
+			this.display.title = item.desc;
+			this.display.style.background = dragonblocks.getTexture(item.texture);
 
 			if (this.count > 1)
-				countDisplay.innerHTML = this.count;
+				this.countDisplay.innerHTML = this.count;
 			else
-				countDisplay.innerHTML = "";
+				this.countDisplay.innerHTML = "";
 		} else {
-			display.title = "";
-			display.style.background = "none";
+			this.display.title = "";
+			this.display.style.background = "none";
 
-			countDisplay.innerHTML = "";
+			this.countDisplay.innerHTML = "";
 		}
 
-		display.style.backgroundColor = this.focused ? "#7E7E7E" : "#343434";
+		this.display.style.backgroundColor = this.focused ? "#7E7E7E" : "#343434";
 
 		this.trigger("redraw");
 	}

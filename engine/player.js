@@ -345,14 +345,12 @@ dragonblocks.Player = class extends dragonblocks.SpawnedEntity
 
 	setInventoryElements(elems)
 	{
-		this.tmp.inventory.elements = elems;
+		this.tmp.inventory.setElements(elems);
 	}
 
 	resetInventoryElements()
 	{
-		let elems = [this.tmp.mainInventory];
-		elems.unshift(this.gamemode == "creative" ? this.tmp.creativeInventory : this.tmp.survivalInventory);
-		this.setInventoryElements(elems);
+		this.setInventoryElements([this.gamemode == "creative" ? this.tmp.creativeInventory : this.tmp.survivalInventory, this.tmp.mainInventory]);
 	}
 
 	previousItem()

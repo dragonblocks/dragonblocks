@@ -25,37 +25,33 @@ dragonblocks.InventoryGroup = class
 {
 	constructor()
 	{
-		this.id = dragonblocks.getToken();
-
-		this._elements = [];
+		this.elements = [];
 		this.opened = false;
 
-		let display = dragonblocks.addInventoryMenuDisplay(document.createElement("div"));
-		display.id = "dragonblocks.inventoryGroup[" + this.id + "]";
-		display.style.position = "fixed";
-		display.style.backgroundColor = "#535353";
-		display.style.visibility = "hidden";
+		this.display = dragonblocks.addInventoryMenuDisplay(document.createElement("div"));
+		this.display.style.position = "fixed";
+		this.display.style.backgroundColor = "#535353";
+		this.display.style.visibility = "hidden";
 	}
 
 	close()
 	{
 		this.opened = false;
 
-		document.getElementById("dragonblocks.inventoryGroup[" + this.id + "]").style.visibility = "hidden";
-		dragonblocks.outStack.getDisplay().style.visibility = "hidden";
+		this.display.style.visibility = "hidden";
+		dragonblocks.outStack.display.style.visibility = "hidden";
 
-		if(this.onNextClose)
-			this.onNextClose();
-
-		this.onNextClose = null;
+		this.onNextClose = this.onNextClose && this.onNextClose();
 	}
 
 	open()
 	{
 		this.opened = true;
 
-		document.getElementById("dragonblocks.inventoryGroup[" + this.id + "]").style.visibility = "inherit";
-		dragonblocks.outStack.getDisplay().style.visibility = "visible";
+		this.display.style.visibility = "inherit";
+		dragonblocks.outStack.display.style.visibility = "visible";
+
+		this.update();
 	}
 
 	toggle()
@@ -63,34 +59,31 @@ dragonblocks.InventoryGroup = class
 		this.opened ? this.close() : this.open();
 	}
 
-	set elements(elements)
+	update()
 	{
-		for (let element of this.elements)
-			element.hide();
-
-		this._elements = elements;
-
-		let container = document.getElementById("dragonblocks.inventoryGroup[" + this.id + "]");
-
 		let height = 0;
 		let width = 0;
 
 		for (let element of this.elements) {
-			element.draw(container, 0, height);
+			element.draw(this.display, 0, height);
 			height += element.calculateHeight();
 			width = Math.max(width, element.calculateWidth());
-			element.show();
 		}
 
-		container.style.width = width + "px";
-		container.style.height = height + "px";
+		this.display.style.width = width + "px";
+		this.display.style.height = height + "px";
 
-		dblib.center(container);
-		dblib.centerVertical(container);
+		dblib.center(this.display);
+		dblib.centerVertical(this.display);
 	}
 
-	get elements()
+	setElements(elements)
 	{
-		return this._elements;
+		for (let element of this.elements)
+			element.remove();
+
+		this.elements = elements;
+
+		this.update();
 	}
 };
