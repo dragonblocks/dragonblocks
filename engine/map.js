@@ -37,21 +37,21 @@ dragonblocks.Map = class
 	serialize()
 	{
 		return {
-			data: this.data,
 			width: this.width,
 			height: this.height,
-			structures: this.structures,
+			sky: this.sky,
+			data: this.data,
 			entities: dblib.removeTmp(this.entities),
+			structures: this.structures,
 		};
 	}
 
 	deserialize(data)
 	{
-		this.data = [];
-
 		this.width = data.width;
 		this.height = data.height;
-
+		this.sky = data.sky;
+		this.data = [];
 		this.entities = [];
 		this.structures = data.structures || {};
 
@@ -139,6 +139,13 @@ dragonblocks.Map = class
 			return new dragonblocks.SpawnedEntity(def, this, x, y);
 	}
 
+	setSky(sky)
+	{
+		this.sky = sky;
+
+		if (this.active)
+			dragonblocks.mapMgr.setSky(this.sky);
+	}
 };
 
 dragonblocks.mapMgr = new dragonblocks.ContentMgr(dragonblocks.Map);

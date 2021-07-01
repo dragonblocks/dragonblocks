@@ -88,6 +88,8 @@ dragonblocks.MapDisplay = class
 		this.map = map;
 		this.map.setActive();
 
+		this.setSky(this.map.sky);
+
 		this.autoScroll() || this.update();
 	}
 
@@ -190,9 +192,8 @@ dragonblocks.registerOnQuit(_ => {
 });
 
 dragonblocks.registerOnStarted(_ => {
-	dragonblocks.mapDisplay.setSky("skyblue");
-	dragonblocks.mapDisplay.setMap(dragonblocks.player.map);
 	dragonblocks.mapDisplay.setAnchor(dragonblocks.player);
+	dragonblocks.mapDisplay.setMap(dragonblocks.player.map);
 
 	dragonblocks.mapDisplay.setActive();
 });
