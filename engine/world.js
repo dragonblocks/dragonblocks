@@ -32,35 +32,42 @@ dragonblocks.World = class
 			this.load();
 		} else {
 			this.mods = properties.mods;
-
 			this.loadMods();
 
-			this.map = new dragonblocks.Map();
+			this.maps = {};
+			this.mapgen = properties.mapgen;
+			this.loadMaps({});
 
-			this.player = new dragonblocks.Player(null, this.map);
+			this.player = new dragonblocks.Player(null, this.maps["dragonblocks:map"]);
 			this.player.setGamemode(properties.gamemode);
-
-			dragonblocks.mapgen.generate(properties.mapgen, this.map);
 		}
 	}
 
 	serialize()
 	{
-		return {
+		let data = {
 			mods: this.mods,
-			map: this.map.serialize(),
 			player: this.player.serialize(),
+			maps: {},
+			mapgen: this.mapgen,
 		};
+
+		for (let name in this.maps)
+			data.maps[name] = this.maps[name].serialize();
+
+		return data;
 	}
 
 	deserialize(data)
 	{
 		this.mods = data.mods;
-
 		this.loadMods();
 
-		this.map = new dragonblocks.Map(data.map);
-		this.player = new dragonblocks.Player(data.player, this.map);
+		this.maps = {};
+		this.mapgen = data.mapgen;
+		this.loadMaps(data.maps);
+
+		this.player = new dragonblocks.Player(data.player, this.maps["dragonblocks:map"]);
 	}
 
 	save()
@@ -77,6 +84,12 @@ dragonblocks.World = class
 	loadMods()
 	{
 		dragonblocks.loadMods(this.mods);
+	}
+
+	loadMaps(data)
+	{
+		for (let name in dragonblocks.mapMgr.defs)
+			this.maps[name] = dragonblocks.mapMgr.create(name, data[name], this.mapgen);
 	}
 };
 

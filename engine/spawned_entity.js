@@ -86,7 +86,7 @@ dragonblocks.SpawnedEntity = class
 		map.entities.push(this);
 
 		this.tmp.map = map;
-		this.tmp.display = map.entityContainer.appendChild(this.display);
+		this.tmp.display = map.entityContainer.appendChild(this.tmp.display);
 
 		this.teleport(x, y);
 	}

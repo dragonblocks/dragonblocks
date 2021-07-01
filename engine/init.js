@@ -112,7 +112,7 @@
 		loadingMods[modname] = false;
 	};
 
-	dragonblocks.loadMods = selectedMods = _ => {
+	dragonblocks.loadMods = selectedMods => {
 		dragonblocks.loadedMods = {};
 
 		for (let mod in selectedMods)
@@ -168,6 +168,7 @@
 	};
 
 	let modules = [
+		"content_mgr",
 		"assets",
 		"key_handler",
 		"gui",
@@ -177,10 +178,10 @@
 		"node",
 		"tool",
 		"group",
-		"builtin",
 		"map_node",
 		"map_display",
 		"map",
+		"builtin",
 		"item_stack",
 		"inventory",
 		"out_stack",

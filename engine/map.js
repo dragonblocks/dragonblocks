@@ -31,10 +31,7 @@ dragonblocks.Map = class
 		this.entityContainer.style.position = "absolute";
 		this.entityContainer.style.visibility = "hidden";
 
-		if (data)
-			this.deserialize(data);
-		else
-			this.clear();
+		this.deserialize(data);
 	}
 
 	serialize()
@@ -43,8 +40,6 @@ dragonblocks.Map = class
 			data: this.data,
 			width: this.width,
 			height: this.height,
-			displayLeft: this.displayLeft,
-			displayTop: this.displayTop,
 			structures: this.structures,
 			entities: dblib.removeTmp(this.entities),
 		};
@@ -53,21 +48,22 @@ dragonblocks.Map = class
 	deserialize(data)
 	{
 		this.data = [];
+
 		this.width = data.width;
 		this.height = data.height;
-		this.displayLeft = data.displayLeft;
-		this.displayTop = data.displayTop;
+
 		this.entities = [];
-		this.structures = data.structures;
+		this.structures = data.structures || {};
 
 		for (let x = 0; x < this.width; x++) {
 			this.data[x] = [];
 			for (let y = 0; y < this.height; y++)
-				this.setNode(x, y, new dragonblocks.MapNode().createFromMapNode(data.data[x][y]));
+				this.setNode(x, y, data.data ? new dragonblocks.MapNode().createFromMapNode(data.data[x][y]) : new dragonblocks.MapNode("air"));
 		}
 
-		for (let entity of data.entities)
-			new dragonblocks.SpawnedEntity(entity);
+		if (data.entities)
+			for (let entity of data.entities)
+				new dragonblocks.SpawnedEntity(entity, this);
 	}
 
 	setActive()
@@ -80,23 +76,6 @@ dragonblocks.Map = class
 	{
 		this.active = false;
 		this.entityContainer.style.visibility = "hidden";
-	}
-
-	clear()
-	{
-		this.data = [];
-		this.width = dragonblocks.settings.map.width;
-		this.height = dragonblocks.settings.map.height;
-		this.displayTop = dragonblocks.settings.map.height / 2;
-		this.displayLeft = dragonblocks.settings.map.width / 2 - 5;
-		this.entities = [];
-		this.structures = {};
-
-		for (let x = 0; x < this.width; x++) {
-			this.data[x] = [];
-			for (let y = 0; y < this.height; y++)
-				this.setNode(x, y, new dragonblocks.MapNode("air"));
-		}
 	}
 
 	withinBounds(x, y)
@@ -161,6 +140,8 @@ dragonblocks.Map = class
 	}
 
 };
+
+dragonblocks.mapMgr = new dragonblocks.ContentMgr(dragonblocks.Map);
 
 dragonblocks.onActivateCallbacks = [];
 dragonblocks.registerOnActivate = func => {

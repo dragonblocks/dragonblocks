@@ -97,9 +97,9 @@ dragonblocks.MapDisplay = class
 		this.autoScroll();
 	}
 
-	setSkyColor(color)
+	setSky(sky)
 	{
-		this.element.style.backgroundColor = color;
+		this.element.style.background = sky;
 	}
 
 	getActiveEntityContainer()
@@ -190,8 +190,8 @@ dragonblocks.registerOnQuit(_ => {
 });
 
 dragonblocks.registerOnStarted(_ => {
-	dragonblocks.mapDisplay.setSkyColor("skyblue");
-	dragonblocks.mapDisplay.setMap(dragonblocks.world.map);
+	dragonblocks.mapDisplay.setSky("skyblue");
+	dragonblocks.mapDisplay.setMap(dragonblocks.player.map);
 	dragonblocks.mapDisplay.setAnchor(dragonblocks.player);
 
 	dragonblocks.mapDisplay.setActive();

@@ -78,3 +78,16 @@ dragonblocks.registerGroup({
 		place: "",
 	}
 });
+
+dragonblocks.mapMgr.register("dragonblocks:map", class extends dragonblocks.Map
+{
+	constructor(data, mapgen)
+	{
+		if (data) {
+			super(data, mapgen);
+		} else {
+			super(dragonblocks.settings.map, mapgen);
+			dragonblocks.mapgen.generate(mapgen, this);
+		}
+	}
+});

@@ -176,13 +176,10 @@
 		// Mods
 		createWorldGUI.create("h2").innerHTML = "&ensp;Mods";
 
-		let modlistDisplay;
+		let modlistDisplay = createWorldGUI.create("ul");
 
 		let updateModlist = _ => {
-			if (modlistDisplay)
-				clearChildren(modlistDisplay);
-			else
-				modlistDisplay = createWorldGUI.create("ul");
+			clearChildren(modlistDisplay);
 
 			let oldSelectedMods = worldProperties.mods;
 			worldProperties.mods = {};
@@ -192,7 +189,7 @@
 
 				let modDisplay = modlistDisplay.appendChild(document.createElement("li"));
 				modDisplay.style.fontSize = "20px";
-				modDisplay.innerHTML = mod;
+				modDisplay.innerHTML = modname;
 				modDisplay.style.postion = "relative";
 				modDisplay.title = modinfo.description;
 
@@ -202,10 +199,10 @@
 				checkbox.style.right = "5px";
 
 				checkbox.addEventListener("input", _ => {
-					worldProperties.mods[mod] = checkbox.checked;
+					worldProperties.mods[modname] = checkbox.checked;
 				});
 
-				worldProperties.mods[mod] = checkbox.checked = oldSelectedMods[mod];
+				worldProperties.mods[modname] = checkbox.checked = oldSelectedMods[modname];
 			}
 		};
 
